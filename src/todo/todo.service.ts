@@ -19,13 +19,12 @@ export class TodoService {
 
 	async orderTodo(data: OrdenarTodo) {
 		this.logger.log('orderTodo')
-		await this.connection.getRepository(Todo).query(
-			`
-			UPDATE todo
-			set orden = ${data.orden}
-			WHERE id = ${data.id};
-			`
-		)
+		await this.connection.createQueryBuilder().update(Todo).
+		set({
+			orden: data.orden
+		})
+		.where("id = :id", { id: data.id })
+		.execute()
 	}
 
 	async updateSimpleTodo( todo: Todo ){
