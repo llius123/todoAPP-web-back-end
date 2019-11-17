@@ -9,7 +9,7 @@ export class LoginAuthGuard implements CanActivate {
 		context: ExecutionContext,
 	): boolean | Promise<boolean> | Observable<boolean> {
 		const request = context.switchToHttp().getRequest();
-		if(request.path !== '/login' && request.headers.acces_token === undefined){
+		if(request.path !== '/login' && request.headers.authorization === undefined){
 			throw new UnauthorizedException({status: HttpStatus.UNAUTHORIZED, error: 'Error loggin'}, HttpStatus.UNAUTHORIZED.toString())
 		}else {
 			this.logger.log('LoginAuthGuard correcto')

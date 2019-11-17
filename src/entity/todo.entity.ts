@@ -13,4 +13,7 @@ export class Todo {
 
 	@Column(  )
 	orden: number;
+	
+	@Column(  )
+	completado: boolean;
 }
