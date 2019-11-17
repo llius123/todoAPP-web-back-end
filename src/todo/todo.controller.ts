@@ -1,6 +1,7 @@
 import { Controller, Get, Put, Body, HttpStatus, HttpException } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { IsNotEmpty, validate, IsInt, IsString, IsIn, IsNumber, ValidationError } from 'class-validator';
+import { Todo } from '../entity/todo.entity';
 
 export class OrdenarTodo {
 	@IsNotEmpty()
@@ -38,10 +39,20 @@ export class TodoController {
 			}
 		} )
 
-		if(erroresValidacion.length > 0){
+		if(erroresValidacion.length === 0){
 			return {code: 200, msg: 'ok'}
 		}else{
 			throw new HttpException({status: HttpStatus.BAD_REQUEST, error: erroresValidacion}, HttpStatus.BAD_REQUEST)
+		}
+	}
+
+	@Put( 'updateSimpleTodo' )
+	async updateSimpleTodo( @Body() todo: Todo) {
+		try {
+			await this.todoService.updateSimpleTodo(todo)
+			return {code: 200, msg: 'ok'};
+		} catch (error) {
+			throw new HttpException({status: HttpStatus.BAD_REQUEST, error: error}, HttpStatus.BAD_REQUEST)
 		}
 	}
 }

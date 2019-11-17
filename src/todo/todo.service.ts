@@ -13,10 +13,12 @@ export class TodoService {
 		private connection: Connection
 	){}
 	async getAllTodo() {
+		this.logger.log('getAllTodo')
 		return await this.connection.getRepository(Todo).find();
 	}
 
 	async orderTodo(data: OrdenarTodo) {
+		this.logger.log('orderTodo')
 		await this.connection.getRepository(Todo).query(
 			`
 			UPDATE todo
@@ -24,5 +26,18 @@ export class TodoService {
 			WHERE id = ${data.id};
 			`
 		)
+	}
+
+	async updateSimpleTodo( todo: Todo ){
+		this.logger.log('updateSimpleTodo')
+		await this.connection.createQueryBuilder().update(Todo).
+		set({
+			titulo: todo.titulo ,
+			descripcion: todo.descripcion,
+			orden: todo.orden,
+			completado: todo.completado
+		})
+		.where("id = :id", { id: todo.id })
+		.execute()
 	}
 }
