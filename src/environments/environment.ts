@@ -1,4 +1,4 @@
 export const environment = {
-	expiresIn: '1m',
-	secret: 'test'
+	expiresIn: "1m",
+	secret: "test"
 };

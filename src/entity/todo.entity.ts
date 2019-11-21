@@ -1,19 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Todo {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column( )
+	@Column()
 	titulo: string;
 
-	@Column(  )
+	@Column()
 	descripcion: string;
 
-	@Column(  )
+	@Column()
 	orden: number;
-	
-	@Column(  )
+
+	@Column()
 	completado: boolean;
 }

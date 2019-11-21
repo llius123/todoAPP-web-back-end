@@ -1,42 +1,43 @@
-import { Todo } from './../entity/todo.entity';
+import { Todo } from "./../entity/todo.entity";
 
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { OrdenarTodo } from './todo.controller';
+import { Injectable, Logger, HttpException, HttpStatus } from "@nestjs/common";
+import { Connection } from "typeorm";
+import { OrdenarTodo } from "./todo.controller";
 
 @Injectable()
 export class TodoService {
-	
 	public readonly logger = new Logger(TodoService.name);
-	
-	constructor(
-		private connection: Connection
-	){}
+
+	constructor(private connection: Connection) {}
 	async getAllTodo() {
-		this.logger.log('getAllTodo')
+		this.logger.log("getAllTodo");
 		return await this.connection.getRepository(Todo).find();
 	}
 
 	async orderTodo(data: OrdenarTodo) {
-		this.logger.log('orderTodo')
-		await this.connection.createQueryBuilder().update(Todo).
-		set({
-			orden: data.orden
-		})
-		.where("id = :id", { id: data.id })
-		.execute()
+		this.logger.log("orderTodo");
+		await this.connection
+			.createQueryBuilder()
+			.update(Todo)
+			.set({
+				orden: data.orden
+			})
+			.where("id = :id", { id: data.id })
+			.execute();
 	}
 
-	async updateSimpleTodo( todo: Todo ){
-		this.logger.log('updateSimpleTodo')
-		await this.connection.createQueryBuilder().update(Todo).
-		set({
-			titulo: todo.titulo ,
-			descripcion: todo.descripcion,
-			orden: todo.orden,
-			completado: todo.completado
-		})
-		.where("id = :id", { id: todo.id })
-		.execute()
+	async updateSimpleTodo(todo: Todo) {
+		this.logger.log("updateSimpleTodo");
+		await this.connection
+			.createQueryBuilder()
+			.update(Todo)
+			.set({
+				titulo: todo.titulo,
+				descripcion: todo.descripcion,
+				orden: todo.orden,
+				completado: todo.completado
+			})
+			.where("id = :id", { id: todo.id })
+			.execute();
 	}
 }
