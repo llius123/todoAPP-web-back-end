@@ -7,6 +7,7 @@ import {
 	HttpStatus,
 	HttpException,
 	Headers,
+	Post,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import {
@@ -72,6 +73,19 @@ export class TodoController {
 		try {
 			await this.todoService.updateSimpleTodo(todo);
 			return { code: 200, msg: "ok" };
+		} catch (error) {
+			throw new HttpException(
+				{ status: HttpStatus.BAD_REQUEST, error: error },
+				HttpStatus.BAD_REQUEST,
+			);
+		}
+	}
+
+	@Post("createTodo")
+	async createTodo(@Body() todo: Todo){
+		try{
+			return this.todoService.createTodo(todo);
+			// return { code: 200, msg: "ok" };
 		} catch (error) {
 			throw new HttpException(
 				{ status: HttpStatus.BAD_REQUEST, error: error },

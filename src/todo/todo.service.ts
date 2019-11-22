@@ -40,4 +40,12 @@ export class TodoService {
 			.where("id = :id", { id: todo.id })
 			.execute();
 	}
+
+	async createTodo(todo: Todo) {
+		this.logger.log("createTodo");
+		let data = await this.connection.query(`SELECT MAX(todo.orden) as orden FROM todo`);
+		data = data[0].orden +1;
+		await this.connection.query(`INSERT INTO todo (titulo, descripcion, orden, completado) VALUES ('${todo.titulo}', '${todo.descripcion}', ${data}, ${todo.completado})`);
+		return this.connection.getRepository(Todo).query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`)
+	}
 }

@@ -18,8 +18,7 @@ import { GlobalModule } from "./global/global.module";
 			username: "root",
 			password: "",
 			database: "todoAPP",
-			entities: [path.join(__dirname, "**/*.entity{.ts,.js}")],
-			synchronize: true
+			entities: [path.join(__dirname, "**/*.entity{.ts,.js}")]
 		}),
 		LoginModule,
 		GlobalModule,
