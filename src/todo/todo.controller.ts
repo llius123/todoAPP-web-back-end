@@ -8,19 +8,18 @@ import {
 	HttpException,
 	Headers,
 	Post,
+	Scope,
+	UnauthorizedException,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import {
 	IsNotEmpty,
 	validate,
 	IsInt,
-	IsString,
-	IsIn,
 	IsNumber,
 	ValidationError,
 } from "class-validator";
 import { Todo } from "../entity/todo.entity";
-import { JwtGlobalService } from './../global/jwt.service';
 
 export class OrdenarTodo {
 	@IsNotEmpty()
@@ -32,32 +31,45 @@ export class OrdenarTodo {
 	orden: number;
 }
 
-@Controller("todo")
+@Controller({path: "todo", scope: Scope.REQUEST})
 export class TodoController {
-	constructor(private readonly todoService: TodoService, private readonly jwtGlobalService: JwtGlobalService, private loginService: LoginService) {}
+	constructor(private readonly todoService: TodoService, private loginService: LoginService) {}
 
 	@Get("getAllTodo")
-	getAllTodo(@Headers("authorization") header) {
-		console.log(header)
-		// await this.loginService.getDatosVerificacionUsuario(header.authorization);
-		return this.todoService.getAllTodo();
+	async getAllTodo(@Headers("authorization") header) {
+		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
+		if(usuario){
+			return this.todoService.getAllTodo(usuario)
+		}else{
+			throw new UnauthorizedException(
+				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },
+				HttpStatus.UNAUTHORIZED.toString(),
+			);
+		} 
 	}
 
 	@Put("updateOrderTodo")
-	updateOrderTodo(@Body() data: [OrdenarTodo]) {
+	async updateOrderTodo(@Body() data: [OrdenarTodo], @Headers("authorization") header) {
 		const erroresValidacion: any = [];
-		data.forEach(async (elemento: OrdenarTodo) => {
-			const ordenarTodo = new OrdenarTodo();
-			ordenarTodo.id = elemento.id;
-			ordenarTodo.orden = elemento.orden;
-			const error: ValidationError[] = await validate(ordenarTodo);
-			if (error.length > 0) {
-				erroresValidacion.push(error[0].constraints);
-			} else {
-				await this.todoService.orderTodo(elemento);
-			}
-		});
-
+		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
+		if(usuario){
+			data.forEach(async (elemento: OrdenarTodo) => {
+				const ordenarTodo = new OrdenarTodo();
+				ordenarTodo.id = elemento.id;
+				ordenarTodo.orden = elemento.orden;
+				const error: ValidationError[] = await validate(ordenarTodo);
+				if (error.length > 0) {
+					erroresValidacion.push(error[0].constraints);
+				} else {
+					await this.todoService.orderTodo(usuario, elemento);
+				}
+			});
+		}else{
+			throw new UnauthorizedException(
+				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },
+				HttpStatus.UNAUTHORIZED.toString(),
+			);
+		}
 		if (erroresValidacion.length <= 0) {
 			return { code: 200, msg: "ok" };
 		} else {
@@ -69,9 +81,10 @@ export class TodoController {
 	}
 
 	@Put("updateSimpleTodo")
-	async updateSimpleTodo(@Body() todo: Todo) {
+	async updateSimpleTodo(@Body() todo: Todo,  @Headers("authorization") header) {
+		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
 		try {
-			await this.todoService.updateSimpleTodo(todo);
+			await this.todoService.updateSimpleTodo(usuario, todo);
 			return { code: 200, msg: "ok" };
 		} catch (error) {
 			throw new HttpException(
@@ -82,9 +95,10 @@ export class TodoController {
 	}
 
 	@Post("createTodo")
-	async createTodo(@Body() todo: Todo){
+	async createTodo(@Body() todo: Todo,  @Headers("authorization") header){
+		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
 		try{
-			return this.todoService.createTodo(todo);
+			return this.todoService.createTodo(usuario, todo);
 			// return { code: 200, msg: "ok" };
 		} catch (error) {
 			throw new HttpException(

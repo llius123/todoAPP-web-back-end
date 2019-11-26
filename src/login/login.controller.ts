@@ -2,12 +2,9 @@ import { User } from "./../entity/user.entity";
 import {
 	Controller,
 	Get,
-	Post,
-	Param,
 	Query,
 	UnauthorizedException,
 	HttpStatus,
-	HttpException,
 } from "@nestjs/common";
 import { LoginService } from "./login.service";
 import { JwtService } from "@nestjs/jwt";

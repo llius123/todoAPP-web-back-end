@@ -13,7 +13,7 @@ export class LoginService {
 		return await this.connection
 			.getRepository(User)
 			.createQueryBuilder("user")
-			.select(["user.username", "user.password"])
+			.select(["user.id", "user.username", "user.password"])
 			.where("user.username = :user and user.password = :pass", {
 				user: user,
 				pass: pass

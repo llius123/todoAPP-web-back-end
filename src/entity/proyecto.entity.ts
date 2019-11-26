@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class UserTodo {
+export class Proyecto {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -9,5 +9,5 @@ export class UserTodo {
 	user_id: number;
 
 	@Column()
-	todo_id: number;
+	titulo: number;
 }

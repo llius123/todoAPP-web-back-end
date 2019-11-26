@@ -16,4 +16,7 @@ export class Todo {
 
 	@Column()
 	completado: boolean;
+
+	@Column()
+	proyecto_id: number;
 }
