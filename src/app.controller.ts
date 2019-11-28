@@ -1,13 +1,18 @@
 import { Controller, Get } from "@nestjs/common";
 import { AppService } from "./app.service";
 import * as path from "path";
+import { ApiUseTags, ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
-@Controller()
+@ApiBearerAuth()
+@ApiUseTags('articles')
+@Controller('articles')
 export class AppController {
 	constructor() {}
 
-	// @Get('hello')
-	// getHello() {
-	// 	// return this.appService.getHello();
-	// }
+	@ApiOperation({ title: 'Get all articles' })
+	@ApiResponse({ status: 200, description: 'Return all articles.'})
+	@Get('hello')
+	getHello() {
+		// return this.appService.getHello();
+	}
 }

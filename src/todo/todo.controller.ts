@@ -21,6 +21,8 @@ import {
 	ValidationError,
 } from "class-validator";
 import { Todo } from "./todo.entity";
+import { ApiResponse, ApiOperation, ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
+import { TodoSwagger } from '../global/swagger';
 
 export class OrdenarTodo {
 	@IsNotEmpty()
@@ -32,10 +34,15 @@ export class OrdenarTodo {
 	orden: number;
 }
 
+@ApiBearerAuth()
+@ApiUseTags('TODO')
 @Controller({path: "todo", scope: Scope.REQUEST})
 export class TodoController {
 	constructor(private readonly todoService: TodoService, private loginService: LoginService) {}
 
+	@ApiOperation({ title: 'Obtener todos los TODO' })
+	@ApiResponse({ status: 201, type: TodoSwagger})
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Get("getAllTodo/:id")
 	async getAllTodo(@Headers("authorization") header, @Param('id') proyecto: number) {
 		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
@@ -49,6 +56,9 @@ export class TodoController {
 		} 
 	}
 
+	@ApiOperation({ title: 'Update order TODO' })
+	@ApiResponse({ status: 201, description: "ok"})
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Put("updateOrderTodo")
 	async updateOrderTodo(@Body() data: [OrdenarTodo], @Headers("authorization") header) {
 		const erroresValidacion: any = [];
@@ -81,6 +91,9 @@ export class TodoController {
 		}
 	}
 
+	@ApiOperation({ title: 'Update simple TODO' })
+	@ApiResponse({ status: 201, description: "ok"})
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Put("updateSimpleTodo")
 	async updateSimpleTodo(@Body() todo: Todo,  @Headers("authorization") header) {
 		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
@@ -95,6 +108,9 @@ export class TodoController {
 		}
 	}
 
+	@ApiOperation({ title: 'Create TODO' })
+	@ApiResponse({ status: 201, type: TodoSwagger})
+	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Post("createTodo")
 	async createTodo(@Body() todo: Todo,  @Headers("authorization") header){
 		const usuario = await this.loginService.getDatosVerificacionUsuario(header);

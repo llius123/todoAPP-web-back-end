@@ -8,7 +8,7 @@ export class Proyecto {
 	id: number;
 
 	@Column()
-	titulo: number;
+	titulo: string;
 
 	@ManyToOne(type => User, user => user.proyecto)
 	usuario: User;
