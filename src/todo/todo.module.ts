@@ -2,7 +2,7 @@ import { environment } from './../environments/environment';
 import { LoginService } from './../login/login.service';
 import { LoginController } from './../login/login.controller';
 import { GlobalModule } from './../global/global.module';
-import { Todo } from "./../entity/todo.entity";
+import { Todo } from "./todo.entity";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TodoController } from "./todo.controller";

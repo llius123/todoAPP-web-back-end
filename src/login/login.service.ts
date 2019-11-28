@@ -1,5 +1,5 @@
 import { JwtGlobalService } from './../global/jwt.service';
-import { User } from "./../entity/user.entity";
+import { User } from "./user.entity";
 import { Injectable } from "@nestjs/common";
 import { Connection } from "typeorm";
 

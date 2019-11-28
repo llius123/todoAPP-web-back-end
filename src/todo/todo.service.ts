@@ -1,22 +1,25 @@
-import { Todo } from "./../entity/todo.entity";
+import { Todo } from "./todo.entity";
 
 import { Injectable, Logger, Scope } from "@nestjs/common";
 import { Connection } from "typeorm";
 import { OrdenarTodo } from "./todo.controller";
-import { User } from "src/entity/user.entity";
+import { User } from "src/login/user.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TodoService {
 	public readonly logger = new Logger(TodoService.name);
 
 	constructor(private connection: Connection) {}
-	async getAllTodo(usuario: User) {
+	async getAllTodo(usuario: User, proyecto: number) {
 		this.logger.log("getAllTodo");
 		return await this.connection.getRepository(Todo).query(
 			`SELECT todo.id, todo.titulo, todo.descripcion, todo.orden, todo.completado
-			FROM todo, proyecto
-			WHERE proyecto.user_id = ? AND proyecto.id = proyecto_id
-			`, [usuario.id]);
+			FROM todo, proyecto, user
+			WHERE proyecto.user_id = ?
+				AND proyecto.id = ?
+				AND proyecto.id = todo.proyecto_id
+			GROUP BY proyecto.id
+			`, [usuario.id, proyecto]);
 	}
 
 	async orderTodo(usuario: User, data: OrdenarTodo) {

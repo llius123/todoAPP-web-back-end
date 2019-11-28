@@ -10,6 +10,7 @@ import {
 	Post,
 	Scope,
 	UnauthorizedException,
+	Param,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import {
@@ -19,7 +20,7 @@ import {
 	IsNumber,
 	ValidationError,
 } from "class-validator";
-import { Todo } from "../entity/todo.entity";
+import { Todo } from "./todo.entity";
 
 export class OrdenarTodo {
 	@IsNotEmpty()
@@ -35,11 +36,11 @@ export class OrdenarTodo {
 export class TodoController {
 	constructor(private readonly todoService: TodoService, private loginService: LoginService) {}
 
-	@Get("getAllTodo")
-	async getAllTodo(@Headers("authorization") header) {
+	@Get("getAllTodo/:id")
+	async getAllTodo(@Headers("authorization") header, @Param('id') proyecto: number) {
 		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
 		if(usuario){
-			return this.todoService.getAllTodo(usuario)
+			return this.todoService.getAllTodo(usuario, proyecto)
 		}else{
 			throw new UnauthorizedException(
 				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },

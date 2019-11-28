@@ -1,7 +1,7 @@
 import { GlobalModule } from './../global/global.module';
 import { JwtGlobalService } from './../global/jwt.service';
 import { environment } from "./../environments/environment";
-import { User } from "./../entity/user.entity";
+import { User } from "./user.entity";
 import { Module } from "@nestjs/common";
 import { LoginController } from "./login.controller";
 import { LoginService } from "./login.service";

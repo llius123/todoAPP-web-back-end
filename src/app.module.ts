@@ -3,11 +3,13 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./entity/user.entity";
+import { User } from "./login/user.entity";
 import { LoginModule } from "./login/login.module";
 import { JwtModule } from "@nestjs/jwt";
 import * as path from "path";
 import { GlobalModule } from "./global/global.module";
+import { Todo } from "./todo/todo.entity";
+import { Proyecto } from "./entity/proyecto.entity";
 
 @Module({
 	imports: [
@@ -18,7 +20,8 @@ import { GlobalModule } from "./global/global.module";
 			username: "root",
 			password: "",
 			database: "todoAPP",
-			entities: [path.join(__dirname, "**/*.entity{.ts,.js}")]
+			entities: [Todo, Proyecto, User],
+			synchronize: true
 		}),
 		LoginModule,
 		GlobalModule,
