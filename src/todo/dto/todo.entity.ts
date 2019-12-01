@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
-import { Proyecto } from "../entity/proyecto.entity";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Proyecto } from "../../entity/proyecto.entity";
 
 @Entity()
 export class Todo {
@@ -21,3 +21,5 @@ export class Todo {
 	@ManyToOne(type => Proyecto, proyecto => proyecto.todos)
 	proyecto: Proyecto;
 }
+
+

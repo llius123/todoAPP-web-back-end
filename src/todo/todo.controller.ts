@@ -1,127 +1,59 @@
-import { LoginService } from './../login/login.service';
 import {
 	Controller,
 	Get,
 	Put,
 	Body,
-	HttpStatus,
-	HttpException,
-	Headers,
 	Post,
 	Scope,
-	UnauthorizedException,
 	Param,
+	UsePipes,
+	Res,
+	Request,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import {
-	IsNotEmpty,
-	validate,
-	IsInt,
-	IsNumber,
-	ValidationError,
-} from "class-validator";
-import { Todo } from "./todo.entity";
+import { Todo, TodoCreate, OrdenarTodo } from "./dto/todo.index";
 import { ApiResponse, ApiOperation, ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { TodoSwagger } from '../global/swagger';
-
-export class OrdenarTodo {
-	@IsNotEmpty()
-	@IsNumber()
-	id: number;
-
-	@IsInt()
-	@IsNotEmpty()
-	orden: number;
-}
+import { ValidationPipe } from '../global/pipes/validation.pipe';
 
 @ApiBearerAuth()
 @ApiUseTags('TODO')
 @Controller({path: "todo", scope: Scope.REQUEST})
 export class TodoController {
-	constructor(private readonly todoService: TodoService, private loginService: LoginService) {}
+	constructor(private readonly todoService: TodoService) {}
 
 	@ApiOperation({ title: 'Obtener todos los TODO' })
 	@ApiResponse({ status: 201, type: TodoSwagger})
-	@ApiResponse({ status: 403, description: 'Forbidden.' })
 	@Get("getAllTodo/:id")
-	async getAllTodo(@Headers("authorization") header, @Param('id') proyecto: number) {
-		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
-		if(usuario){
-			return this.todoService.getAllTodo(usuario, proyecto)
-		}else{
-			throw new UnauthorizedException(
-				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },
-				HttpStatus.UNAUTHORIZED.toString(),
-			);
-		} 
+	async getAllTodo(@Param('id') proyecto: number, @Request() request) {
+		return this.todoService.getAllTodo(request.user, proyecto)
 	}
 
 	@ApiOperation({ title: 'Update order TODO' })
 	@ApiResponse({ status: 201, description: "ok"})
-	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@UsePipes(new ValidationPipe(OrdenarTodo))
 	@Put("updateOrderTodo")
-	async updateOrderTodo(@Body() data: [OrdenarTodo], @Headers("authorization") header) {
-		const erroresValidacion: any = [];
-		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
-		if(usuario){
-			data.forEach(async (elemento: OrdenarTodo) => {
-				const ordenarTodo = new OrdenarTodo();
-				ordenarTodo.id = elemento.id;
-				ordenarTodo.orden = elemento.orden;
-				const error: ValidationError[] = await validate(ordenarTodo);
-				if (error.length > 0) {
-					erroresValidacion.push(error[0].constraints);
-				} else {
-					await this.todoService.orderTodo(usuario, elemento);
-				}
-			});
-		}else{
-			throw new UnauthorizedException(
-				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },
-				HttpStatus.UNAUTHORIZED.toString(),
-			);
-		}
-		if (erroresValidacion.length <= 0) {
-			return { code: 200, msg: "ok" };
-		} else {
-			throw new HttpException(
-				{ status: HttpStatus.BAD_REQUEST, error: erroresValidacion },
-				HttpStatus.BAD_REQUEST,
-			);
-		}
+	async updateOrderTodo(@Body() data: [OrdenarTodo],@Request() request) {
+		data.forEach(async (elemento: OrdenarTodo) => {
+			await this.todoService.orderTodo(request.user, elemento);
+		});
+		return { code: 200, msg: "ok" };
 	}
 
 	@ApiOperation({ title: 'Update simple TODO' })
 	@ApiResponse({ status: 201, description: "ok"})
-	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@UsePipes(new ValidationPipe(TodoCreate))
 	@Put("updateSimpleTodo")
-	async updateSimpleTodo(@Body() todo: Todo,  @Headers("authorization") header) {
-		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
-		try {
-			await this.todoService.updateSimpleTodo(usuario, todo);
-			return { code: 200, msg: "ok" };
-		} catch (error) {
-			throw new HttpException(
-				{ status: HttpStatus.BAD_REQUEST, error: error },
-				HttpStatus.BAD_REQUEST,
-			);
-		}
+	async updateSimpleTodo(@Body() todo: Todo, @Request() request) {
+		await this.todoService.updateSimpleTodo(request.user, todo);
+		return { code: 200, msg: "ok" };
 	}
 
 	@ApiOperation({ title: 'Create TODO' })
 	@ApiResponse({ status: 201, type: TodoSwagger})
-	@ApiResponse({ status: 403, description: 'Forbidden.' })
+	@UsePipes(new ValidationPipe(TodoCreate))
 	@Post("createTodo")
-	async createTodo(@Body() todo: Todo,  @Headers("authorization") header){
-		const usuario = await this.loginService.getDatosVerificacionUsuario(header);
-		try{
-			return this.todoService.createTodo(usuario, todo);
-			// return { code: 200, msg: "ok" };
-		} catch (error) {
-			throw new HttpException(
-				{ status: HttpStatus.BAD_REQUEST, error: error },
-				HttpStatus.BAD_REQUEST,
-			);
-		}
+	async createTodo(@Body() todo: Todo, @Request() request){
+		return this.todoService.createTodo(request.user, todo);
 	}
 }

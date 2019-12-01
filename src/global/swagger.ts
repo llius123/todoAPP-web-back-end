@@ -32,7 +32,7 @@ export class ProyectoSwagger {
 	usuarioId: number;
 }
 
-export class User {
+export class UserSwagger {
 	@ApiModelProperty({ example: 1, description: 'Id USER' })
 	id: number;
 

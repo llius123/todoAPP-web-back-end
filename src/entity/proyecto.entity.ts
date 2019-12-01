@@ -1,6 +1,6 @@
 import { User } from '../login/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from "typeorm";
-import { Todo } from '../todo/todo.entity';
+import { Todo } from '../todo/dto/todo.index';
 
 @Entity()
 export class Proyecto {

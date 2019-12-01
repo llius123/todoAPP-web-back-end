@@ -2,12 +2,13 @@ import { environment } from './../environments/environment';
 import { LoginService } from './../login/login.service';
 import { LoginController } from './../login/login.controller';
 import { GlobalModule } from './../global/global.module';
-import { Todo } from "./todo.entity";
-import { Module } from "@nestjs/common";
+import { Todo } from "./dto/todo.entity";
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
 import { JwtModule } from '@nestjs/jwt';
+import { AuthMiddleware } from '../global/auth.middleware';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Todo]),
@@ -18,4 +19,15 @@ import { JwtModule } from '@nestjs/jwt';
 	controllers: [TodoController, LoginController],
 	providers: [TodoService, LoginService],
 })
-export class TodoModule {}
+export class TodoModule implements NestModule{
+	public configure(consumer: MiddlewareConsumer) {
+		consumer
+		.apply(AuthMiddleware)
+		.forRoutes(
+			{path: 'todo/getAllTodo/:id', method: RequestMethod.GET},
+			{path: 'todo/updateOrderTodo', method: RequestMethod.PUT},
+			{path: 'todo/updateSimpleTodo', method: RequestMethod.PUT},
+			{path: 'todo/createTodo', method: RequestMethod.POST}
+		);
+	}
+}

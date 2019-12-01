@@ -1,37 +1,44 @@
-import { Todo } from "./todo.entity";
+import { Todo } from "./dto/todo.entity";
+import { User } from "../login/user.entity";
 
 import { Injectable, Logger, Scope } from "@nestjs/common";
-import { Connection } from "typeorm";
-import { OrdenarTodo } from "./todo.controller";
-import { User } from "src/login/user.entity";
+import { Connection, Repository } from "typeorm";
+import { OrdenarTodo } from "../todo/dto/todo.index";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TodoService {
 	public readonly logger = new Logger(TodoService.name);
 
-	constructor(private connection: Connection) {}
+	constructor(
+		@InjectRepository(Todo)
+		private readonly todoRepository: Repository<Todo>,
+		private connection: Connection
+	) {}
+
 	async getAllTodo(usuario: User, proyecto: number) {
 		this.logger.log("getAllTodo");
-		return await this.connection.getRepository(Todo).query(
+		return await this.todoRepository.query(
 			`SELECT todo.id, todo.titulo, todo.descripcion, todo.orden, todo.completado
 			FROM todo, proyecto, user
-			WHERE proyecto.user_id = ?
+			WHERE proyecto.usuarioId = ?
 				AND proyecto.id = ?
-				AND proyecto.id = todo.proyecto_id
+				AND proyecto.id = todo.proyectoId
 			GROUP BY proyecto.id
-			`, [usuario.id, proyecto]);
+			`, [usuario.id, proyecto]
+		)
 	}
 
 	async orderTodo(usuario: User, data: OrdenarTodo) {
 		this.logger.log("orderTodo");
-		await this.connection.query(
+		await this.todoRepository.query(
 			`
 			UPDATE todo, user, proyecto
 			set todo.orden = ?
 			WHERE user.id = ?
 				AND todo.id = ?
-				AND user.id = proyecto.user_id
-				AND proyecto.id = todo.proyecto_id
+				AND user.id = proyecto.usuarioId
+				AND proyecto.id = todo.proyectoId
 			`,
 			[data.orden, usuario.id, data.id]
 		)
@@ -39,7 +46,7 @@ export class TodoService {
 
 	async updateSimpleTodo(usuario: User, todo: Todo) {
 		this.logger.log("updateSimpleTodo");
-		await this.connection.query(
+		await this.todoRepository.query(
 			`
 			UPDATE todo, user, proyecto
 			SET todo.titulo = ?
@@ -48,9 +55,9 @@ export class TodoService {
 				,todo.completado = ?
 			WHERE user.id = ?
 				AND todo.id = ?
-				AND proyecto.id = todo.proyecto_id
-				AND user.id = proyecto.user_id
-				AND proyecto.id = todo.proyecto_id
+				AND proyecto.id = todo.proyectoId
+				AND user.id = proyecto.usuarioId
+				AND proyecto.id = todo.proyectoId
 			`,
 			[todo.titulo, todo.descripcion, +todo.orden, +todo.completado, +usuario.id, +todo.id]
 		)
@@ -64,18 +71,16 @@ export class TodoService {
 				`
 				SELECT MAX(todo.orden) as orden
 				FROM todo, proyecto, user
-				WHERE todo.proyecto_id = ?
+				WHERE todo.proyectoId = ?
 					AND user.id = ?
-					AND user.id = proyecto.user_id
+					AND user.id = proyecto.usuarioId
 				`,
 				[todo.id, usuario.id]);
 			getMaxOrden = getMaxOrden[0].orden +1;
 			//Inserto el nuevo registro
-			await transaction.query(`INSERT INTO todo (titulo, descripcion, orden, completado) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado})`);
+			await transaction.query(`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${todo.proyecto.id})`);
 			//Inserto el nuevo registro en la tabla intermedia
-			const nuevoTodo: Todo = await transaction.getRepository(Todo).query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`)
-			//Inserto en la tabla intermedia el nuevo registro
-			await transaction.query(`INSERT INTO user_todo (user_id, todo_id) VALUES ('${usuario.id}', '${nuevoTodo[0].id}')`).then(resp => {console.log(resp)})
+			return await transaction.getRepository(Todo).query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`)
 		})
 	}
 }

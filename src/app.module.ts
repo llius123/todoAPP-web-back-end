@@ -8,7 +8,7 @@ import { LoginModule } from "./login/login.module";
 import { JwtModule } from "@nestjs/jwt";
 import * as path from "path";
 import { GlobalModule } from "./global/global.module";
-import { Todo } from "./todo/todo.entity";
+import { Todo } from "./todo/dto/todo.entity";
 import { Proyecto } from "./entity/proyecto.entity";
 
 @Module({
