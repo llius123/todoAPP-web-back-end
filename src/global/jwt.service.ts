@@ -11,7 +11,7 @@ export class JwtGlobalService {
 		this._jwtService.sign(JSON.parse(JSON.stringify(user)));
 	}
 
-	public jwtDecode(token: string): any{
+	public jwtDecode(token: string): any {
 		return this._jwtService.decode(token);
 	}
 }

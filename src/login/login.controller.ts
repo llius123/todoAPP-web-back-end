@@ -26,8 +26,8 @@ export class LoginController {
 			return {
 				username: userLogged.username,
 				access_token: this.jwtService.sign(
-					JSON.parse(JSON.stringify(userLogged))
-				)
+					JSON.parse(JSON.stringify(userLogged)),
+				),
 			};
 		} else {
 			throw new UnauthorizedException(

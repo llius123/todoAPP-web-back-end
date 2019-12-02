@@ -21,5 +21,3 @@ export class Todo {
 	@ManyToOne(type => Proyecto, proyecto => proyecto.todos)
 	proyecto: Proyecto;
 }
-
-

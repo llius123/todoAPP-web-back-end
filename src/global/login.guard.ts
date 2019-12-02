@@ -4,7 +4,7 @@ import {
 	ExecutionContext,
 	UnauthorizedException,
 	HttpStatus,
-	Logger
+	Logger,
 } from "@nestjs/common";
 import { Observable } from "rxjs";
 
@@ -13,7 +13,7 @@ export class LoginAuthGuard implements CanActivate {
 	public readonly logger = new Logger(LoginAuthGuard.name);
 
 	canActivate(
-		context: ExecutionContext
+		context: ExecutionContext,
 	): boolean | Promise<boolean> | Observable<boolean> {
 		const request = context.switchToHttp().getRequest();
 		if (
@@ -22,7 +22,7 @@ export class LoginAuthGuard implements CanActivate {
 		) {
 			throw new UnauthorizedException(
 				{ status: HttpStatus.UNAUTHORIZED, error: "Error loggin" },
-				HttpStatus.UNAUTHORIZED.toString()
+				HttpStatus.UNAUTHORIZED.toString(),
 			);
 		} else {
 			this.logger.log("LoginAuthGuard correcto");

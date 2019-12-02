@@ -21,13 +21,13 @@ import { Proyecto } from "./entity/proyecto.entity";
 			password: "",
 			database: "todoAPP",
 			entities: [Todo, Proyecto, User],
-			synchronize: true
+			synchronize: true,
 		}),
 		LoginModule,
 		GlobalModule,
 		TodoModule,
 	],
 	controllers: [AppController],
-	providers: [AppService]
+	providers: [AppService],
 })
 export class AppModule {}

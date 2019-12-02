@@ -13,7 +13,7 @@ export class TodoService {
 	constructor(
 		@InjectRepository(Todo)
 		private readonly todoRepository: Repository<Todo>,
-		private connection: Connection
+		private connection: Connection,
 	) {}
 
 	async getAllTodo(usuario: User, proyecto: number) {
@@ -25,11 +25,12 @@ export class TodoService {
 				AND proyecto.id = ?
 				AND proyecto.id = todo.proyectoId
 			GROUP BY proyecto.id
-			`, [usuario.id, proyecto]
-		)
+			`,
+			[usuario.id, proyecto],
+		);
 	}
 
-	async orderTodo(usuario: User, data: OrdenarTodo) {
+	async orderTodo(usuario: User, data: OrdenarTodo, idProyecto: number) {
 		this.logger.log("orderTodo");
 		await this.todoRepository.query(
 			`
@@ -37,11 +38,12 @@ export class TodoService {
 			set todo.orden = ?
 			WHERE user.id = ?
 				AND todo.id = ?
+				AND proyecto.id = ?
 				AND user.id = proyecto.usuarioId
 				AND proyecto.id = todo.proyectoId
 			`,
-			[data.orden, usuario.id, data.id]
-		)
+			[data.orden, usuario.id, data.id, idProyecto],
+		);
 	}
 
 	async updateSimpleTodo(usuario: User, todo: Todo) {
@@ -59,14 +61,21 @@ export class TodoService {
 				AND user.id = proyecto.usuarioId
 				AND proyecto.id = todo.proyectoId
 			`,
-			[todo.titulo, todo.descripcion, +todo.orden, +todo.completado, +usuario.id, +todo.id]
-		)
+			[
+				todo.titulo,
+				todo.descripcion,
+				+todo.orden,
+				+todo.completado,
+				+usuario.id,
+				+todo.id,
+			],
+		);
 	}
 
 	async createTodo(usuario: User, todo: Todo) {
-		this.connection.transaction( async transaction => {
+		this.connection.transaction(async transaction => {
 			this.logger.log("createTodo");
-			//Obtengo el orden del ultimo TODO y le sumo 1
+			// Obtengo el orden del ultimo TODO y le sumo 1
 			let getMaxOrden = await transaction.query(
 				`
 				SELECT MAX(todo.orden) as orden
@@ -75,12 +84,17 @@ export class TodoService {
 					AND user.id = ?
 					AND user.id = proyecto.usuarioId
 				`,
-				[todo.id, usuario.id]);
-			getMaxOrden = getMaxOrden[0].orden +1;
-			//Inserto el nuevo registro
-			await transaction.query(`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${todo.proyecto.id})`);
-			//Inserto el nuevo registro en la tabla intermedia
-			return await transaction.getRepository(Todo).query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`)
-		})
+				[todo.id, usuario.id],
+			);
+			getMaxOrden = getMaxOrden[0].orden + 1;
+			// Inserto el nuevo registro
+			await transaction.query(
+				`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${todo.proyecto.id})`,
+			);
+			// Inserto el nuevo registro en la tabla intermedia
+			return await transaction
+				.getRepository(Todo)
+				.query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`);
+		});
 	}
 }

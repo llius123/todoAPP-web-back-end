@@ -1,5 +1,5 @@
-import { GlobalModule } from './../global/global.module';
-import { JwtGlobalService } from './../global/jwt.service';
+import { GlobalModule } from "./../global/global.module";
+import { JwtGlobalService } from "./../global/jwt.service";
 import { environment } from "./../environments/environment";
 import { User } from "./user.entity";
 import { Module } from "@nestjs/common";

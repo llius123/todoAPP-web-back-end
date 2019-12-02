@@ -11,11 +11,11 @@ import { JwtGlobalService } from "./jwt.service";
 	imports: [
 		JwtModule.register({
 			secret: environment.secret,
-			signOptions: { expiresIn: environment.expiresIn }
-		})
+			signOptions: { expiresIn: environment.expiresIn },
+		}),
 	],
 	controllers: [],
 	providers: [JwtGlobalService],
-	exports: [JwtGlobalService]
+	exports: [JwtGlobalService],
 })
 export class GlobalModule {}
