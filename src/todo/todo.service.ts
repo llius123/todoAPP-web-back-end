@@ -1,9 +1,9 @@
-import { Todo } from "./dto/todo.entity";
+import { Todo } from "./entity/todo.entity";
 import { User } from "../login/user.entity";
 
 import { Injectable, Logger, Scope } from "@nestjs/common";
 import { Connection, Repository } from "typeorm";
-import { OrdenarTodo } from "../todo/dto/todo.index";
+import { OrdenarTodo } from "./entity/todo.index";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable({ scope: Scope.REQUEST })

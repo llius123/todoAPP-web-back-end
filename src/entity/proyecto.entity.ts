@@ -6,7 +6,7 @@ import {
 	ManyToOne,
 	OneToMany,
 } from "typeorm";
-import { Todo } from "../todo/dto/todo.index";
+import { Todo } from "../todo/entity/todo.index";
 
 @Entity()
 export class Proyecto {

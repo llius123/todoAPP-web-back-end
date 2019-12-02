@@ -2,7 +2,7 @@ import { environment } from "./../environments/environment";
 import { LoginService } from "./../login/login.service";
 import { LoginController } from "./../login/login.controller";
 import { GlobalModule } from "./../global/global.module";
-import { Todo } from "./dto/todo.entity";
+import { Todo } from "./entity/todo.entity";
 import {
 	Module,
 	NestModule,

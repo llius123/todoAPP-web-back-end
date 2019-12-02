@@ -11,7 +11,7 @@ import {
 	Request,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { Todo, TodoCreate, OrdenarTodo } from "./dto/todo.index";
+import { Todo, TodoCreate, OrdenarTodo } from "./entity/todo.index";
 import {
 	ApiResponse,
 	ApiOperation,
