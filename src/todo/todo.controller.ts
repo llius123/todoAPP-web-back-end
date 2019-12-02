@@ -46,6 +46,7 @@ export class TodoController {
 			await this.todoService.orderTodo(
 				request.user,
 				elemento,
+				// Este parametro se coje del REQUEST cuando deberia poder cojer un @Param('id'), pero no se que pasa pero no funciona
 				request.params.id,
 			);
 		});
