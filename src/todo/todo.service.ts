@@ -24,7 +24,7 @@ export class TodoService {
 			WHERE proyecto.usuarioId = ?
 				AND proyecto.id = ?
 				AND proyecto.id = todo.proyectoId
-			GROUP BY proyecto.id
+			GROUP BY todo.id
 			`,
 			[usuario.id, proyecto],
 		);
@@ -72,7 +72,7 @@ export class TodoService {
 		);
 	}
 
-	async createTodo(usuario: User, todo: Todo) {
+	async createTodo(usuario: User, todo: Todo, idProyecto: number) {
 		this.connection.transaction(async transaction => {
 			this.logger.log("createTodo");
 			// Obtengo el orden del ultimo TODO y le sumo 1
@@ -84,17 +84,26 @@ export class TodoService {
 					AND user.id = ?
 					AND user.id = proyecto.usuarioId
 				`,
-				[todo.id, usuario.id],
+				[idProyecto, usuario.id],
 			);
 			getMaxOrden = getMaxOrden[0].orden + 1;
 			// Inserto el nuevo registro
 			await transaction.query(
-				`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${todo.proyecto.id})`,
+				`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${idProyecto})`,
 			);
-			// Inserto el nuevo registro en la tabla intermedia
-			return await transaction
-				.getRepository(Todo)
-				.query(`SELECT * FROM todo WHERE id=(SELECT MAX(id) FROM todo);`);
+			// Devuelvo el todo creado
+			const nuevoTodo = await transaction
+			.getRepository(Todo)
+			.query(`
+			SELECT *
+			FROM todo, proyecto, user
+			WHERE todo.id=(SELECT MAX(todo.id))
+				AND proyecto.usuarioId = ?
+				AND proyecto.id = ?
+				AND proyecto.id = todo.proyectoId
+				ORDER BY todo.id DESC LIMIT 0, 1
+				`,[usuario.id, idProyecto]);
+			return nuevoTodo;
 		});
 	}
 }

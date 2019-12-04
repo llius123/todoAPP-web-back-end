@@ -34,8 +34,8 @@ export class TodoModule implements NestModule {
 			.forRoutes(
 				{ path: "todo/getAllTodo/:id", method: RequestMethod.GET },
 				{ path: "todo/updateOrderTodo/:id", method: RequestMethod.PUT },
-				{ path: "todo/updateSimpleTodo", method: RequestMethod.PUT },
-				{ path: "todo/createTodo", method: RequestMethod.POST },
+				{ path: "todo/updateSimpleTodo/:id", method: RequestMethod.PUT },
+				{ path: "todo/createTodo/:id", method: RequestMethod.POST },
 			);
 	}
 }

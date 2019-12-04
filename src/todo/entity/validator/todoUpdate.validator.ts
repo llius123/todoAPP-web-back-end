@@ -7,12 +7,16 @@ import { Type } from "class-transformer";
  * Clase que se usa para hacer las validaciones de ValidationPipe
  */
 @Entity()
-export class TodoCreate {
+export class TodoUpdate {
 	@IsNotEmpty()
 	titulo: string;
 
 	@IsNotEmpty()
 	descripcion: string;
+
+	@IsNotEmpty()
+	@IsInt()
+	orden: number;
 
 	@IsNotEmpty()
 	@Min(0)

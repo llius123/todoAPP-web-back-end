@@ -11,7 +11,7 @@ import {
 	Request,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { Todo, TodoCreate, OrdenarTodo } from "./entity/todo.index";
+import { Todo, TodoCreate, OrdenarTodo, TodoUpdate } from "./entity/todo.index";
 import {
 	ApiResponse,
 	ApiOperation,
@@ -55,7 +55,7 @@ export class TodoController {
 
 	@ApiOperation({ title: "Update simple TODO" })
 	@ApiResponse({ status: 201, description: "ok" })
-	@UsePipes(new ValidationPipe(TodoCreate))
+	@UsePipes(new ValidationPipe(TodoUpdate))
 	@Put("updateSimpleTodo")
 	async updateSimpleTodo(@Body() todo: Todo, @Request() request) {
 		await this.todoService.updateSimpleTodo(request.user, todo);
@@ -65,8 +65,8 @@ export class TodoController {
 	@ApiOperation({ title: "Create TODO" })
 	@ApiResponse({ status: 201, type: TodoSwagger })
 	@UsePipes(new ValidationPipe(TodoCreate))
-	@Post("createTodo")
+	@Post("createTodo/:idProyecto")
 	async createTodo(@Body() todo: Todo, @Request() request) {
-		return this.todoService.createTodo(request.user, todo);
+		return this.todoService.createTodo(request.user, todo, request.params.idProyecto);
 	}
 }
