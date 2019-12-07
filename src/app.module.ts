@@ -5,11 +5,10 @@ import { AppService } from "./app.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./login/user.entity";
 import { LoginModule } from "./login/login.module";
-import { JwtModule } from "@nestjs/jwt";
-import * as path from "path";
 import { GlobalModule } from "./global/global.module";
 import { Todo } from "./todo/entity/todo.entity";
-import { Proyecto } from "./entity/proyecto.entity";
+import { ProyectoModule } from "./proyecto/proyecto.module";
+import { Proyecto } from "./proyecto/entity/proyecto.index";
 
 @Module({
 	imports: [
@@ -26,6 +25,7 @@ import { Proyecto } from "./entity/proyecto.entity";
 		LoginModule,
 		GlobalModule,
 		TodoModule,
+		ProyectoModule
 	],
 	controllers: [AppController],
 	providers: [AppService],

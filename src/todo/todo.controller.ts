@@ -56,9 +56,9 @@ export class TodoController {
 	@ApiOperation({ title: "Update simple TODO" })
 	@ApiResponse({ status: 201, description: "ok" })
 	@UsePipes(new ValidationPipe(TodoUpdate))
-	@Put("updateSimpleTodo")
+	@Put("updateSimpleTodo/:idProyecto")
 	async updateSimpleTodo(@Body() todo: Todo, @Request() request) {
-		await this.todoService.updateSimpleTodo(request.user, todo);
+		await this.todoService.updateSimpleTodo(request.user, todo, request.params.idProyecto);
 		return { code: 200, msg: "ok" };
 	}
 

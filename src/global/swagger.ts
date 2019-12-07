@@ -20,17 +20,6 @@ export class TodoSwagger {
 	proyectoId: number;
 }
 
-export class ProyectoSwagger {
-	@ApiModelProperty({ example: 1, description: "Id PROYECTO" })
-	id: number;
-
-	@ApiModelProperty({ example: "Titulo", description: "Titulo PROYECTO" })
-	titulo: string;
-
-	@ApiModelProperty({ example: 1, description: "UsuarioId PROYECTO" })
-	usuarioId: number;
-}
-
 export class UserSwagger {
 	@ApiModelProperty({ example: 1, description: "Id USER" })
 	id: number;
@@ -40,4 +29,15 @@ export class UserSwagger {
 
 	@ApiModelProperty({ example: "Admin", description: "Password USER" })
 	password: string;
+}
+
+export class ProyectoSwagger {
+	@ApiModelProperty({ example: 1, description: "Id PROYECTO" })
+	id: number;
+
+	@ApiModelProperty({ example: "Titulo", description: "Titulo PROYECTO" })
+	titulo: string;
+
+	@ApiModelProperty({ example: 1, description: "usuarioId PROYECTO" })
+	usuarioId: number;
 }

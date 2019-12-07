@@ -25,6 +25,7 @@ export class TodoService {
 				AND proyecto.id = ?
 				AND proyecto.id = todo.proyectoId
 			GROUP BY todo.id
+			ORDER BY todo.orden
 			`,
 			[usuario.id, proyecto],
 		);
@@ -46,7 +47,7 @@ export class TodoService {
 		);
 	}
 
-	async updateSimpleTodo(usuario: User, todo: Todo) {
+	async updateSimpleTodo(usuario: User, todo: Todo, idProyecto: number) {
 		this.logger.log("updateSimpleTodo");
 		await this.todoRepository.query(
 			`
@@ -57,6 +58,7 @@ export class TodoService {
 				,todo.completado = ?
 			WHERE user.id = ?
 				AND todo.id = ?
+				AND proyecto.id = ?
 				AND proyecto.id = todo.proyectoId
 				AND user.id = proyecto.usuarioId
 				AND proyecto.id = todo.proyectoId
@@ -68,6 +70,7 @@ export class TodoService {
 				+todo.completado,
 				+usuario.id,
 				+todo.id,
+				idProyecto
 			],
 		);
 	}

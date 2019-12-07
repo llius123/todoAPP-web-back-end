@@ -1,4 +1,4 @@
-import { IsNotEmpty, Max, Min, IsInt, ValidateNested } from "class-validator";
+import { IsNotEmpty, Max, Min, IsInt, ValidateNested, IsIn } from "class-validator";
 import { Entity } from "typeorm";
 import { ProyectoTodoCreate } from "../todo.index";
 import { Type } from "class-transformer";
@@ -19,9 +19,8 @@ export class TodoUpdate {
 	orden: number;
 
 	@IsNotEmpty()
-	@Min(0)
-	@Max(1)
-	completado: boolean;
+	@IsIn([0,1])
+	completado: number;
 
 	@ValidateNested()
 	@Type(() => ProyectoTodoCreate)
