@@ -17,7 +17,7 @@ import { Proyecto } from "./proyecto/entity/proyecto.index";
 			host: "localhost",
 			port: 3306,
 			username: "root",
-			password: "",
+			password: "y55VDqj2LP%",
 			database: "todoAPP",
 			entities: [Todo, Proyecto, User],
 			synchronize: true,
