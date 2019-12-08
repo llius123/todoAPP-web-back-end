@@ -70,7 +70,7 @@ export class TodoService {
 				+todo.completado,
 				+usuario.id,
 				+todo.id,
-				idProyecto
+				idProyecto,
 			],
 		);
 	}
@@ -95,9 +95,8 @@ export class TodoService {
 				`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${idProyecto})`,
 			);
 			// Devuelvo el todo creado
-			const nuevoTodo = await transaction
-			.getRepository(Todo)
-			.query(`
+			const nuevoTodo = await transaction.getRepository(Todo).query(
+				`
 			SELECT *
 			FROM todo, proyecto, user
 			WHERE todo.id=(SELECT MAX(todo.id))
@@ -105,7 +104,9 @@ export class TodoService {
 				AND proyecto.id = ?
 				AND proyecto.id = todo.proyectoId
 				ORDER BY todo.id DESC LIMIT 0, 1
-				`,[usuario.id, idProyecto]);
+				`,
+				[usuario.id, idProyecto],
+			);
 			return nuevoTodo;
 		});
 	}

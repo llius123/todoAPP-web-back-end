@@ -58,7 +58,11 @@ export class TodoController {
 	@UsePipes(new ValidationPipe(TodoUpdate))
 	@Put("updateSimpleTodo/:idProyecto")
 	async updateSimpleTodo(@Body() todo: Todo, @Request() request) {
-		await this.todoService.updateSimpleTodo(request.user, todo, request.params.idProyecto);
+		await this.todoService.updateSimpleTodo(
+			request.user,
+			todo,
+			request.params.idProyecto,
+		);
 		return { code: 200, msg: "ok" };
 	}
 
@@ -67,6 +71,10 @@ export class TodoController {
 	@UsePipes(new ValidationPipe(TodoCreate))
 	@Post("createTodo/:idProyecto")
 	async createTodo(@Body() todo: Todo, @Request() request) {
-		return this.todoService.createTodo(request.user, todo, request.params.idProyecto);
+		return this.todoService.createTodo(
+			request.user,
+			todo,
+			request.params.idProyecto,
+		);
 	}
 }

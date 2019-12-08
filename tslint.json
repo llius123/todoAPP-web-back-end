@@ -14,7 +14,9 @@
     "arrow-parens": false,
 	"object-literal-sort-keys": false,
 	"max-classes-per-file": [false],
-	"indent": false
+	"indent": false,
+	"no-empty": false,
+	"variable-name": false
   },
   "rulesDirectory": []
 }

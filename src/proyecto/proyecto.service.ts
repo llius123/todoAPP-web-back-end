@@ -43,18 +43,18 @@ export class ProyectoService {
 				WHERE user.id = ?
 					AND user.id = proyecto.usuarioId
 			`,
-			[usuario.id]
-		)
+			[usuario.id],
+		);
 
 		return await this.proyectoRepository.query(
 			`
-			SELECT proyecto.id as id, proyecto.titulo as titulo, proyecto.usuarioId as usuarioId 
+			SELECT proyecto.id as id, proyecto.titulo as titulo, proyecto.usuarioId as usuarioId
 				FROM proyecto, user
 				WHERE user.id = ?
 					AND proyecto.id = ?
 					AND user.id = proyecto.usuarioId
 			`,
-			[usuario.id, id[0].id]
-		)
+			[usuario.id, id[0].id],
+		);
 	}
 }

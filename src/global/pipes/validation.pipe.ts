@@ -116,6 +116,7 @@ export class ValidationArrayPipe implements PipeTransform<any> {
 		/**
 		 * Recorro los objetos validando uno a uno
 		 */
+		/* tslint:disable:prefer-for-of */
 		for (let i = 0; i < object.length; i++) {
 			/**
 			 * Valido si el objeto es correcto
@@ -139,16 +140,14 @@ export class ValidationArrayPipe implements PipeTransform<any> {
 		}
 		return value;
 	}
-	/**
-	 * La validacion de datos de datos esta capada hasta un primer hijo, si alguna vez se tiene un hijo dentro de otro, modificar el if
-	 * Todo {proyecto{pepe{...}}}
-	 * Modificar el if, añadiendo otro foreach
-	 * el.children.forEach(element => {
-	 *	Object.entries(element.constraints).forEach(constraint => {
-	 *		result[prop + constraint[0]] = `${constraint[1]}`;
-	 *		});
-	 *	});
-	 */
+	// // La validacion de datos de datos esta capada hasta un primer hijo, si alguna vez se tiene un hijo dentro de otro, modificar el if
+	// // Todo {proyecto{pepe{...}}}
+	// // Modificar el if, añadiendo otro foreach
+	// el.children.forEach(element => {
+	// 	Object.entries(element.constraints).forEach(constraint => {
+	// 		result[prop + constraint[0]] = `${constraint[1]}`;
+	// 	});
+	// });
 	private buildError(errors) {
 		const result = {};
 		if (Array.isArray(errors)) {

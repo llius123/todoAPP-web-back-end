@@ -25,7 +25,7 @@ import { Proyecto } from "./proyecto/entity/proyecto.index";
 		LoginModule,
 		GlobalModule,
 		TodoModule,
-		ProyectoModule
+		ProyectoModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
