@@ -1,20 +1,26 @@
+#!/usr/bin/env groovy
+
 pipeline {
-	agent any
-	stages {
-		stage('Checkout') {
-			steps {
-				echo 'Checkout...'
-				checkout scm
-				stash 'sources'
-			}
-		}
-		stage('Build') {
-			steps {
-				echo 'Build...'
-				unstash 'sources'
-				sh 'mvn clean package -DskipTests'
-				stash 'sources'
-			}
-		}
-	}
+
+    agent {
+        docker {
+            image 'node'
+            args '-u root'
+        }
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh 'npm test'
+            }
+        }
+    }
 }
