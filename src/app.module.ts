@@ -14,10 +14,10 @@ import { Proyecto } from "./proyecto/entity/proyecto.index";
 	imports: [
 		TypeOrmModule.forRoot({
 			type: "mysql",
-			host: "localhost",
+			host: "104.248.135.16",
 			port: 3306,
 			username: "root",
-			password: "y55VDqj2LP%",
+			password: "mellamojesus5765",
 			database: "todoAPP",
 			entities: [Todo, Proyecto, User],
 			synchronize: true,
