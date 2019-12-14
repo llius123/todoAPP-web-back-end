@@ -115,24 +115,16 @@ export class TodoService {
 	async eliminarTodo(usuario: User, id: number){
 		this.logger.log("eliminarTodo");
 
-		// const todo: any = await this.todoRepository.createQueryBuilder('todo')
-		// // .select('todo.id as id').addSelect('todo.titulo as titulo').addSelect('todo.descripcion as descripcion').addSelect('todo.orden as orden').addSelect('todo.completado as completado').addSelect('todo.proyectoId as proyectoId')
-		// .addFrom(User, "user").addFrom(Proyecto, "proyecto")
-		// .where('user.id = :id AND proyecto.usuarioId = user.id', {id: usuario.id})
-		// // .andWhere('proyecto.usuarioId = user.id')
-		// .andWhere('proyecto.id = todo.proyectoId')
-		// .andWhere('todo.id = :id', {id: id})
-		// .getSql()
-
-		const todo: any = await createQueryBuilder(Todo, 'todo')
+		const todo: [any] = await createQueryBuilder()
 		.from(User, 'u')
 		.addFrom(Proyecto, 'p')
-		.where('t.id = 44')
+		.addFrom(Todo, 't')
+		.where('t.id = :idTodo', {idTodo: id})
 		.andWhere('u.id = p.usuarioId')
 		.andWhere('p.id = t.proyectoId')
-		.andWhere('u.id = 1').execute()
+		.andWhere('u.id = :idUsuario', {idUsuario: usuario.id}).execute()
 
-		if(todo.length > 0){
+		if(todo[0] !== null && todo.length > 0){
 			await this.todoRepository.createQueryBuilder().delete().from(Todo).where("todo.id = :id", {id: id}).execute()
 			return { msg: 'Ok'}
 		}else{
