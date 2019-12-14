@@ -2,7 +2,7 @@ import { Injectable, Logger, Scope } from "@nestjs/common";
 import { User } from "../login/user.entity";
 import { Proyecto } from "./entity/proyecto.index";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Connection } from "typeorm";
+import { Repository, Connection, createQueryBuilder } from "typeorm";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProyectoService {
@@ -10,8 +10,7 @@ export class ProyectoService {
 
 	constructor(
 		@InjectRepository(Proyecto)
-		private readonly proyectoRepository: Repository<Proyecto>,
-		private connection: Connection,
+		private readonly proyectoRepository: Repository<Proyecto>
 	) {}
 
 	async getAllProyecto(usuario: User) {
@@ -56,5 +55,10 @@ export class ProyectoService {
 			`,
 			[usuario.id, id[0].id],
 		);
+	}
+
+	async eliminarProyecto(usuario: User, idProyecto: number) {
+		this.logger.log("eliminarProyecto");
+		return await this.proyectoRepository.createQueryBuilder('proyecto').delete().from(Proyecto).where('id = :id AND usuarioId = :idUsuario', {id: idProyecto, idUsuario: usuario.id}).execute();
 	}
 }

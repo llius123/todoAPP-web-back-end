@@ -12,6 +12,6 @@ export class User {
 	@Column()
 	password: string;
 
-	@OneToMany(type => Proyecto, proyecto => proyecto.id)
+	@OneToMany(type => Proyecto, proyecto => proyecto.id, { onUpdate: 'NO ACTION', onDelete: 'NO ACTION' }, )
 	proyecto: Proyecto[];
 }

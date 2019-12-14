@@ -8,6 +8,6 @@ export class Proyecto {
 	@Column()
 	titulo: string;
 
-	@ManyToOne(type => User, usuario => usuario.id)
+	@ManyToOne(type => User, usuario => usuario.id, { onUpdate: 'NO ACTION', onDelete: 'NO ACTION' })
 	usuario: User;
 }

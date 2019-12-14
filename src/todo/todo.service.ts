@@ -2,9 +2,10 @@ import { Todo } from "./entity/todo.entity";
 import { User } from "../login/user.entity";
 
 import { Injectable, Logger, Scope } from "@nestjs/common";
-import { Connection, Repository } from "typeorm";
+import { Connection, Repository, createQueryBuilder } from "typeorm";
 import { OrdenarTodo } from "./entity/todo.index";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Proyecto } from "../proyecto/entity/proyecto.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TodoService {
@@ -109,5 +110,33 @@ export class TodoService {
 			);
 			return nuevoTodo;
 		});
+	}
+
+	async eliminarTodo(usuario: User, id: number){
+		this.logger.log("eliminarTodo");
+
+		// const todo: any = await this.todoRepository.createQueryBuilder('todo')
+		// // .select('todo.id as id').addSelect('todo.titulo as titulo').addSelect('todo.descripcion as descripcion').addSelect('todo.orden as orden').addSelect('todo.completado as completado').addSelect('todo.proyectoId as proyectoId')
+		// .addFrom(User, "user").addFrom(Proyecto, "proyecto")
+		// .where('user.id = :id AND proyecto.usuarioId = user.id', {id: usuario.id})
+		// // .andWhere('proyecto.usuarioId = user.id')
+		// .andWhere('proyecto.id = todo.proyectoId')
+		// .andWhere('todo.id = :id', {id: id})
+		// .getSql()
+
+		const todo: any = await createQueryBuilder(Todo, 'todo')
+		.from(User, 'u')
+		.addFrom(Proyecto, 'p')
+		.where('t.id = 44')
+		.andWhere('u.id = p.usuarioId')
+		.andWhere('p.id = t.proyectoId')
+		.andWhere('u.id = 1').execute()
+
+		if(todo.length > 0){
+			await this.todoRepository.createQueryBuilder().delete().from(Todo).where("todo.id = :id", {id: id}).execute()
+			return { msg: 'Ok'}
+		}else{
+			return { msg: 'Error'}
+		}
 	}
 }

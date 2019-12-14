@@ -6,6 +6,7 @@ import {
 	Get,
 	Post,
 	Body,
+	Delete,
 } from "@nestjs/common";
 import {
 	ApiBearerAuth,
@@ -35,5 +36,12 @@ export class ProyectoController {
 	@Post("createProyecto")
 	async createProyecto(@Body() proyecto: Proyecto, @Request() request) {
 		return this.proyectoService.createProyecto(request.user, proyecto);
+	}
+
+	@ApiOperation({ title: "Eliminar un PROYECTO" })
+	@ApiResponse({ status: 201, type: 'Ok' })
+	@Delete("eliminarProyecto/:idProyecto")
+	async eliminarProyecto(@Param("idProyecto") id: number, @Request() request) {
+		return this.proyectoService.eliminarProyecto(request.user, id);
 	}
 }

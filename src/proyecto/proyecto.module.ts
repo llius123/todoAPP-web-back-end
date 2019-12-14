@@ -24,6 +24,7 @@ export class ProyectoModule implements NestModule {
 			.forRoutes(
 				{ path: "proyecto/getAllProyecto", method: RequestMethod.GET },
 				{ path: "proyecto/createProyecto", method: RequestMethod.POST },
+				{ path: "proyecto/eliminarProyecto/:idProyecto", method: RequestMethod.DELETE},
 			);
 	}
 }

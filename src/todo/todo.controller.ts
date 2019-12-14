@@ -9,6 +9,7 @@ import {
 	UsePipes,
 	Res,
 	Request,
+	Delete,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import { Todo, TodoCreate, OrdenarTodo, TodoUpdate } from "./entity/todo.index";
@@ -76,5 +77,12 @@ export class TodoController {
 			todo,
 			request.params.idProyecto,
 		);
+	}
+
+	@ApiOperation({ title: "Eliminar TODO" })
+	@ApiResponse({ status: 201, type: 'Ok' })
+	@Delete("eliminar/:idTodo")
+	async eliminarTodo(@Param("idTodo") id, @Request() request) {
+		return this.todoService.eliminarTodo(request.user, id);
 	}
 }
