@@ -81,7 +81,7 @@ export class TodoController {
 
 	@ApiOperation({ title: "Eliminar TODO" })
 	@ApiResponse({ status: 201, type: 'Ok' })
-	@Delete("eliminar/:idTodo")
+	@Delete("eliminarTodo/:idTodo")
 	async eliminarTodo(@Param("idTodo") id, @Request() request) {
 		return this.todoService.eliminarTodo(request.user, id);
 	}
