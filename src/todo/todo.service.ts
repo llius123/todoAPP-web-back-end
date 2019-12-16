@@ -19,17 +19,16 @@ export class TodoService {
 
 	async getAllTodo(usuario: User, proyecto: number) {
 		this.logger.log("getAllTodo");
-		return await this.todoRepository.query(
-			`SELECT todo.id, todo.titulo, todo.descripcion, todo.orden, todo.completado
-			FROM todo, proyecto, user
-			WHERE proyecto.usuarioId = ?
-				AND proyecto.id = ?
-				AND proyecto.id = todo.proyectoId
-			GROUP BY todo.id
-			ORDER BY todo.orden
-			`,
-			[usuario.id, proyecto],
-		);
+		return await this.todoRepository
+		.createQueryBuilder("todo")
+		.addFrom(Proyecto, "proyecto")
+		.addFrom(User, "user")
+		.where("proyecto.usuarioId = :usuarioId", {usuarioId: usuario.id})
+		.andWhere("proyecto.id = :proyectoId", {proyectoId: proyecto})
+		.andWhere("proyecto.id = todo.proyectoId")
+		.groupBy("todo.id")
+		.orderBy("todo.orden")
+		.execute();
 	}
 
 	async orderTodo(usuario: User, data: OrdenarTodo, idProyecto: number) {
