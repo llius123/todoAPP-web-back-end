@@ -33,52 +33,52 @@ export class TodoService {
 
 	async orderTodo(usuario: User, data: OrdenarTodo, idProyecto: number) {
 		this.logger.log("orderTodo");
-		await this.todoRepository.query(
-			`
-			UPDATE todo, user, proyecto
-			set todo.orden = ?
-			WHERE user.id = ?
-				AND todo.id = ?
-				AND proyecto.id = ?
-				AND user.id = proyecto.usuarioId
-				AND proyecto.id = todo.proyectoId
-			`,
-			[data.orden, usuario.id, data.id, idProyecto],
-		);
+		const todo = await this.todoRepository.createQueryBuilder()
+		.addFrom(Proyecto, "proyecto")
+		.addFrom(User, "user")
+		.where("user.id = :userId", {userId: usuario.id})
+		.andWhere("todo.id = :todoId", {todoId: data.id})
+		.andWhere("proyecto.id = :proyectoId", {proyectoId: idProyecto})
+		.andWhere("user.id = proyecto.usuarioId")
+		.andWhere("proyecto.id = todo.proyectoId").execute()
+		if(todo[0] !== null && todo.length > 0){
+			await this.todoRepository.createQueryBuilder()
+			.update(Todo)
+			.set({orden: data.orden})
+			.where("id = :todoId", {todoId: data.id})
+			.execute()
+		}
 	}
 
-	async updateSimpleTodo(usuario: User, todo: Todo, idProyecto: number) {
+	async updateSimpleTodo(usuario: User, data: Todo, idProyecto: number) {
 		this.logger.log("updateSimpleTodo");
-		await this.todoRepository.query(
-			`
-			UPDATE todo, user, proyecto
-			SET todo.titulo = ?
-				,todo.descripcion = ?
-				,todo.orden = ?
-				,todo.completado = ?
-			WHERE user.id = ?
-				AND todo.id = ?
-				AND proyecto.id = ?
-				AND proyecto.id = todo.proyectoId
-				AND user.id = proyecto.usuarioId
-				AND proyecto.id = todo.proyectoId
-			`,
-			[
-				todo.titulo,
-				todo.descripcion,
-				+todo.orden,
-				+todo.completado,
-				+usuario.id,
-				+todo.id,
-				idProyecto,
-			],
-		);
+		const todo = await this.todoRepository.createQueryBuilder()
+		.addFrom(Proyecto, "proyecto")
+		.addFrom(User, "user")
+		.where("user.id = :userId", {userId: usuario.id})
+		.andWhere("todo.id = :todoId", {todoId: data.id})
+		.andWhere("proyecto.id = :proyectoId", {proyectoId: idProyecto})
+		.andWhere("user.id = proyecto.usuarioId")
+		.andWhere("proyecto.id = todo.proyectoId").execute()
+		if(todo[0] !== null && todo.length > 0){
+			await this.todoRepository.createQueryBuilder()
+			.update(Todo)
+			.set({
+				orden: data.orden,
+				titulo: data.titulo,
+				descripcion: data.descripcion,
+				completado: data.completado
+			})
+			.where("id = :todoId", {todoId: data.id})
+			.execute()
+		}
 	}
 
 	async createTodo(usuario: User, todo: Todo, idProyecto: number) {
 		this.connection.transaction(async transaction => {
 			this.logger.log("createTodo");
 			// Obtengo el orden del ultimo TODO y le sumo 1
+			
 			let getMaxOrden = await transaction.query(
 				`
 				SELECT MAX(todo.orden) as orden

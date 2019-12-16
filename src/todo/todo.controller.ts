@@ -39,7 +39,6 @@ export class TodoController {
 	}
 
 	@ApiOperation({ title: "Update order TODO" })
-	@ApiResponse({ status: 201, description: "ok" })
 	@UsePipes(new ValidationArrayPipe(OrdenarTodo))
 	@Put("updateOrderTodo/:id")
 	async updateOrderTodo(@Body() data: [OrdenarTodo], @Request() request) {
@@ -80,7 +79,6 @@ export class TodoController {
 	}
 
 	@ApiOperation({ title: "Eliminar TODO" })
-	@ApiResponse({ status: 201, type: 'Ok' })
 	@Delete("eliminarTodo/:idTodo")
 	async eliminarTodo(@Param("idTodo") id, @Request() request) {
 		return this.todoService.eliminarTodo(request.user, id);
