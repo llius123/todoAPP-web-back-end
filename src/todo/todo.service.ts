@@ -75,40 +75,44 @@ export class TodoService {
 	}
 
 	async createTodo(usuario: User, todo: Todo, idProyecto: number) {
-		this.connection.transaction(async transaction => {
+		await this.connection.transaction(async transaction => {
 			this.logger.log("createTodo");
 			// Obtengo el orden del ultimo TODO y le sumo 1
-			
-			let getMaxOrden = await transaction.query(
-				`
-				SELECT MAX(todo.orden) as orden
-				FROM todo, proyecto, user
-				WHERE todo.proyectoId = ?
-					AND user.id = ?
-					AND user.id = proyecto.usuarioId
-				`,
-				[idProyecto, usuario.id],
-			);
+			let getMaxOrden = await transaction
+			.createQueryBuilder()
+			.select("MAX(todo.orden)", "orden")
+			.addFrom(Todo, "todo")
+			.addFrom(Proyecto, "proyecto")
+			.addFrom(User, "user")
+			.where("todo.proyectoId = :proyectoId",{proyectoId: idProyecto})
+			.andWhere("user.id = usuarioId", {usuarioId: usuario.id})
+			.andWhere("user.id = proyecto.usuarioId").execute();
 			getMaxOrden = getMaxOrden[0].orden + 1;
 			// Inserto el nuevo registro
-			await transaction.query(
-				`INSERT INTO todo (titulo, descripcion, orden, completado, proyectoId) VALUES ('${todo.titulo}', '${todo.descripcion}', ${getMaxOrden}, ${todo.completado}, ${idProyecto})`,
-			);
+			await transaction
+			.createQueryBuilder(Todo, "todo")
+			.insert()
+			.values({
+				titulo: todo.titulo,
+				descripcion: todo.descripcion,
+				orden: getMaxOrden,
+				completado: todo.completado,
+				proyecto: {
+					id: idProyecto
+				}
+			}).execute()
 			// Devuelvo el todo creado
-			const nuevoTodo = await transaction.getRepository(Todo).query(
-				`
-			SELECT *
-			FROM todo, proyecto, user
-			WHERE todo.id=(SELECT MAX(todo.id))
-				AND proyecto.usuarioId = ?
-				AND proyecto.id = ?
-				AND proyecto.id = todo.proyectoId
-				ORDER BY todo.id DESC LIMIT 0, 1
-				`,
-				[usuario.id, idProyecto],
-			);
-			return nuevoTodo;
+			// nuevoTodo = await transaction
+			// .createQueryBuilder(Todo, "todo")
+			// .addFrom(Proyecto, "proyecto")
+			// .where("todo.id=(SELECT MAX(todo.id))")
+			// .andWhere("proyecto.usuarioId = :usuarioId", {usuarioId: +usuario.id})
+			// .andWhere("proyecto.id = :proyectoId", {proyectoId: +idProyecto})
+			// .andWhere("proyecto.id = todo.proyectoId")
+			// .orderBy("todo.id", "DESC")
+			// .limit(0).limit(1).execute();
 		});
+		// return nuevoTodo[0];
 	}
 
 	async eliminarTodo(usuario: User, id: number){

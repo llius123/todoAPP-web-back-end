@@ -67,15 +67,16 @@ export class TodoController {
 	}
 
 	@ApiOperation({ title: "Create TODO" })
-	@ApiResponse({ status: 201, type: TodoSwagger })
+	// @ApiResponse({ status: 201, type: TodoSwagger })
 	@UsePipes(new ValidationPipe(TodoCreate))
 	@Post("createTodo/:idProyecto")
 	async createTodo(@Body() todo: Todo, @Request() request) {
-		return this.todoService.createTodo(
+		await this.todoService.createTodo(
 			request.user,
 			todo,
 			request.params.idProyecto,
 		);
+		return { code: 200, msg: "ok" };
 	}
 
 	@ApiOperation({ title: "Eliminar TODO" })
