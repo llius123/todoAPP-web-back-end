@@ -3,6 +3,7 @@ import { User } from "../login/user.entity";
 import { Proyecto } from "./entity/proyecto.index";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Connection, createQueryBuilder } from "typeorm";
+import { classToPlain } from "class-transformer";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProyectoService {
@@ -13,52 +14,70 @@ export class ProyectoService {
 		private readonly proyectoRepository: Repository<Proyecto>
 	) {}
 
-	async getAllProyecto(usuario: User) {
+	async getAllProyecto(usuario: User): Promise<Proyecto[]>{
 		this.logger.log("getAllProyecto");
-		return await this.proyectoRepository.query(
-			`SELECT proyecto.id, proyecto.usuarioId, proyecto.titulo
-			FROM proyecto, user
-			WHERE proyecto.usuarioId = ?
-				AND user.id = proyecto.usuarioId
-			GROUP BY proyecto.id
-			`,
-			[usuario.id],
-		);
+		console.log(
+			await this.proyectoRepository
+		.createQueryBuilder()
+		.select("proyecto.id", "id")
+		.addSelect("proyecto.titulo", "titulo")
+		.addSelect("proyecto.usuarioId", "usuarioId")
+		.addFrom(User, "user")
+		.addFrom(Proyecto, "proyecto")
+		.where("proyecto.usuarioId = :idUsuario", {idUsuario: usuario.id})
+		.andWhere("user.id = proyecto.usuarioId")
+		.groupBy("proyecto.id").getQueryAndParameters()
+		)
+		return await this.proyectoRepository
+		.createQueryBuilder()
+		.select("proyecto.id", "id")
+		.addSelect("proyecto.titulo", "titulo")
+		.addSelect("proyecto.usuarioId", "usuarioId")
+		.addFrom(User, "user")
+		.addFrom(Proyecto, "proyecto")
+		.where("proyecto.usuarioId = :idUsuario", {idUsuario: usuario.id})
+		.andWhere("user.id = proyecto.usuarioId")
+		.groupBy("proyecto.id").execute();
 	}
 
 	async createProyecto(usuario: User, proyecto: Proyecto) {
 		this.logger.log("createProyecto");
-		await this.proyectoRepository.query(
-			`
-			INSERT INTO proyecto (titulo, usuarioId) VALUES (?, ?)
-			`,
-			[proyecto.titulo, usuario.id],
-		);
+		await this.proyectoRepository.createQueryBuilder()
+		.insert()
+		.values({
+			titulo: proyecto.titulo,
+			usuario: {
+				id: usuario.id
+			}
+		}).execute();
 
-		const id = await this.proyectoRepository.query(
-			`
-			SELECT MAX(proyecto.id) as id
-				FROM proyecto, user
-				WHERE user.id = ?
-					AND user.id = proyecto.usuarioId
-			`,
-			[usuario.id],
-		);
+		const id = await this.proyectoRepository
+		.createQueryBuilder()
+		.select("MAX(proyecto.id)", "id")
+		.from(User, "user")
+		.where("user.id = :userId", {userId: usuario.id})
+		.andWhere("user.id = proyecto.usuarioId")
+		.execute()
 
-		return await this.proyectoRepository.query(
-			`
-			SELECT proyecto.id as id, proyecto.titulo as titulo, proyecto.usuarioId as usuarioId
-				FROM proyecto, user
-				WHERE user.id = ?
-					AND proyecto.id = ?
-					AND user.id = proyecto.usuarioId
-			`,
-			[usuario.id, id[0].id],
-		);
+		return await this.proyectoRepository
+		.createQueryBuilder()
+		.select("proyecto.id", "id")
+		.addSelect("proyecto.titulo", "titulo")
+		.addSelect("proyecto.usuarioId", "usuarioId")
+		.from(User, "user")
+		.where("user.id = :usuarioId", {usuarioId: usuario.id})
+		.andWhere("proyecto.id = :proyectoId", {proyectoId: id[0].id})
+		.andWhere("user.id = proyecto.usuarioId")
+		.execute();
 	}
 
 	async eliminarProyecto(usuario: User, idProyecto: number) {
 		this.logger.log("eliminarProyecto");
-		return await this.proyectoRepository.createQueryBuilder('proyecto').delete().from(Proyecto).where('id = :id AND usuarioId = :idUsuario', {id: idProyecto, idUsuario: usuario.id}).execute();
+		await this.proyectoRepository
+		.createQueryBuilder()
+		.delete()
+		.where("id = :id", {id: idProyecto})
+		.andWhere("usuario.id = :idUsuario", {idUsuario: usuario.id})
+		.execute();
 	}
 }

@@ -101,18 +101,7 @@ export class TodoService {
 					id: idProyecto
 				}
 			}).execute()
-			// Devuelvo el todo creado
-			// nuevoTodo = await transaction
-			// .createQueryBuilder(Todo, "todo")
-			// .addFrom(Proyecto, "proyecto")
-			// .where("todo.id=(SELECT MAX(todo.id))")
-			// .andWhere("proyecto.usuarioId = :usuarioId", {usuarioId: +usuario.id})
-			// .andWhere("proyecto.id = :proyectoId", {proyectoId: +idProyecto})
-			// .andWhere("proyecto.id = todo.proyectoId")
-			// .orderBy("todo.id", "DESC")
-			// .limit(0).limit(1).execute();
 		});
-		// return nuevoTodo[0];
 	}
 
 	async eliminarTodo(usuario: User, id: number){

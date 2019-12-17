@@ -27,7 +27,7 @@ export class ProyectoController {
 	@ApiOperation({ title: "Obtener todos los PROYECTO" })
 	@ApiResponse({ status: 201, type: ProyectoSwagger })
 	@Get("getAllProyecto")
-	async getAllProyecto(@Request() request) {
+	async getAllProyecto(@Request() request): Promise<Proyecto[]> {
 		return this.proyectoService.getAllProyecto(request.user);
 	}
 
@@ -42,6 +42,6 @@ export class ProyectoController {
 	@ApiResponse({ status: 201, type: 'Ok' })
 	@Delete("eliminarProyecto/:idProyecto")
 	async eliminarProyecto(@Param("idProyecto") id: number, @Request() request) {
-		return this.proyectoService.eliminarProyecto(request.user, id);
+		this.proyectoService.eliminarProyecto(request.user, id);
 	}
 }
