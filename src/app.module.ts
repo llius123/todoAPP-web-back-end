@@ -12,26 +12,26 @@ import { Proyecto } from "./proyecto/entity/proyecto.index";
 
 @Module({
 	imports: [
-		TypeOrmModule.forRoot({
-			host: 'localhost',
-			port: 5432,
-			username: 'postgres',
-			password: 'admin',
-			database: 'todoAPP',
-			type: 'postgres',
-			entities: [Todo, Proyecto, User],
-			synchronize: true
-		}),
 		// TypeOrmModule.forRoot({
-		// 	type: "mysql",
-		// 	host: "localhost",
-		// 	port: 3306,
-		// 	username: "root",
-		// 	password: "",
-		// 	database: "todoAPP",
+		// 	host: 'localhost',
+		// 	port: 5432,
+		// 	username: 'postgres',
+		// 	password: 'admin',
+		// 	database: 'todoAPP',
+		// 	type: 'postgres',
 		// 	entities: [Todo, Proyecto, User],
-		// 	synchronize: true,
+		// 	synchronize: true
 		// }),
+		TypeOrmModule.forRoot({
+			type: "mysql",
+			host: "localhost",
+			port: 3306,
+			username: "root",
+			password: "",
+			database: "todoAPP",
+			entities: [Todo, Proyecto, User],
+			synchronize: true,
+		}),
 		LoginModule,
 		GlobalModule,
 		TodoModule,

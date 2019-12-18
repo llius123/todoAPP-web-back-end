@@ -7,6 +7,7 @@ import {
 	Post,
 	Body,
 	Delete,
+	UsePipes,
 } from "@nestjs/common";
 import {
 	ApiBearerAuth,
@@ -17,6 +18,8 @@ import {
 import { ProyectoSwagger } from "../global/swagger";
 import { ProyectoService } from "./proyecto.service";
 import { Proyecto } from "./entity/proyecto.index";
+import { CreateProyecto } from "./entity/validator/createProyecto.validator";
+import { ValidationPipe } from "../global/pipes/validation.pipe";
 
 @ApiBearerAuth()
 @ApiUseTags("PROYECTO")
@@ -33,6 +36,7 @@ export class ProyectoController {
 
 	@ApiOperation({ title: "Crear un PROYECTO" })
 	@ApiResponse({ status: 201, type: ProyectoSwagger })
+	@UsePipes(new ValidationPipe(CreateProyecto))
 	@Post("createProyecto")
 	async createProyecto(@Body() proyecto: Proyecto, @Request() request) {
 		return this.proyectoService.createProyecto(request.user, proyecto);
