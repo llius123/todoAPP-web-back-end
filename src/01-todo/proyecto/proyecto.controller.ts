@@ -15,11 +15,11 @@ import {
 	ApiOperation,
 	ApiResponse,
 } from "@nestjs/swagger";
-import { ProyectoSwagger } from "../global/swagger";
+import { ProyectoSwagger } from "../../global/swagger";
 import { ProyectoService } from "./proyecto.service";
 import { Proyecto } from "./entity/proyecto.index";
 import { CreateProyecto } from "./entity/validator/createProyecto.validator";
-import { ValidationPipe } from "../global/pipes/validation.pipe";
+import { ValidationPipe } from "../../global/pipes/validation.pipe";
 
 @ApiBearerAuth()
 @ApiUseTags("PROYECTO")
@@ -43,7 +43,7 @@ export class ProyectoController {
 	}
 
 	@ApiOperation({ title: "Eliminar un PROYECTO" })
-	@ApiResponse({ status: 201, type: 'Ok' })
+	@ApiResponse({ status: 201, type: "Ok" })
 	@Delete("eliminarProyecto/:idProyecto")
 	async eliminarProyecto(@Param("idProyecto") id: number, @Request() request) {
 		this.proyectoService.eliminarProyecto(request.user, id);

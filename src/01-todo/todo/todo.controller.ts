@@ -19,11 +19,11 @@ import {
 	ApiUseTags,
 	ApiBearerAuth,
 } from "@nestjs/swagger";
-import { TodoSwagger } from "../global/swagger";
+import { TodoSwagger } from "../../global/swagger";
 import {
 	ValidationPipe,
 	ValidationArrayPipe,
-} from "../global/pipes/validation.pipe";
+} from "../../global/pipes/validation.pipe";
 
 @ApiBearerAuth()
 @ApiUseTags("TODO")

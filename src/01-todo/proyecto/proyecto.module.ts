@@ -1,5 +1,5 @@
-import { GlobalModule } from "../global/global.module";
-import { Proyecto } from "../proyecto/entity/proyecto.entity";
+import { GlobalModule } from "../../global/global.module";
+import { Proyecto } from "./entity/proyecto.entity";
 import {
 	Module,
 	NestModule,
@@ -7,10 +7,10 @@ import {
 	RequestMethod,
 } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthMiddleware } from "../global/auth.middleware";
+import { AuthMiddleware } from "../../global/auth.middleware";
 import { ProyectoController } from "./proyecto.controller";
 import { ProyectoService } from "./proyecto.service";
-import { LoginService } from "../login/login.service";
+import { LoginService } from "../../login/login.service";
 
 @Module({
 	imports: [TypeOrmModule.forFeature([Proyecto]), GlobalModule],
@@ -24,7 +24,10 @@ export class ProyectoModule implements NestModule {
 			.forRoutes(
 				{ path: "proyecto/getAllProyecto", method: RequestMethod.GET },
 				{ path: "proyecto/createProyecto", method: RequestMethod.POST },
-				{ path: "proyecto/eliminarProyecto/:idProyecto", method: RequestMethod.DELETE},
+				{
+					path: "proyecto/eliminarProyecto/:idProyecto",
+					method: RequestMethod.DELETE,
+				},
 			);
 	}
 }

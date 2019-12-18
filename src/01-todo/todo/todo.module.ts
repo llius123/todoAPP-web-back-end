@@ -1,7 +1,7 @@
-import { environment } from "./../environments/environment";
-import { LoginService } from "./../login/login.service";
-import { LoginController } from "./../login/login.controller";
-import { GlobalModule } from "./../global/global.module";
+import { environment } from "../../environments/environment";
+import { LoginService } from "../../login/login.service";
+import { LoginController } from "../../login/login.controller";
+import { GlobalModule } from "../../global/global.module";
 import { Todo } from "./entity/todo.entity";
 import {
 	Module,
@@ -13,7 +13,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
 import { JwtModule } from "@nestjs/jwt";
-import { AuthMiddleware } from "../global/auth.middleware";
+import { AuthMiddleware } from "../../global/auth.middleware";
 
 @Module({
 	imports: [

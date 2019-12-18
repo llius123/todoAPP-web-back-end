@@ -1,4 +1,4 @@
-import { Proyecto } from "../proyecto/entity/proyecto.entity";
+import { Proyecto } from "../01-todo/proyecto/entity/proyecto.entity";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
 @Entity()
@@ -12,6 +12,9 @@ export class User {
 	@Column()
 	password: string;
 
-	@OneToMany(type => Proyecto, proyecto => proyecto.id, { onUpdate: 'NO ACTION', onDelete: 'NO ACTION' }, )
+	@OneToMany(type => Proyecto, proyecto => proyecto.id, {
+		onUpdate: "NO ACTION",
+		onDelete: "NO ACTION",
+	})
 	proyecto: Proyecto[];
 }

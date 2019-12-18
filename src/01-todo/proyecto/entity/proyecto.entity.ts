@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { User } from "../../login/user.entity";
+import { User } from "../../../login/user.entity";
 @Entity()
 export class Proyecto {
 	@PrimaryGeneratedColumn()
@@ -8,6 +8,9 @@ export class Proyecto {
 	@Column()
 	titulo: string;
 
-	@ManyToOne(type => User, usuario => usuario.id, { onUpdate: 'NO ACTION', onDelete: 'NO ACTION' })
+	@ManyToOne(type => User, usuario => usuario.id, {
+		onUpdate: "NO ACTION",
+		onDelete: "NO ACTION",
+	})
 	usuario: User;
 }
