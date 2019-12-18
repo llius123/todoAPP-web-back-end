@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Tag } from "./entity/tag.entity";
 import { User } from "../../login/user.entity";
 import { Proyecto } from "../proyecto/entity/proyecto.index";
+import { classToPlain } from "class-transformer";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TagService {
@@ -31,7 +32,7 @@ export class TagService {
 	}
 
 	async updateSimpleTag(usuario: User, data: Tag, idProyecto: number) {
-		this.logger.log("updateSimpleTodo");
+		this.logger.log("updateSimpleTag");
 		const todo = await this.tagRepository
 			.createQueryBuilder()
 			.addFrom(Proyecto, "proyecto")
@@ -52,5 +53,43 @@ export class TagService {
 				.where("id = :todoId", { todoId: data.id })
 				.execute();
 		}
+	}
+
+	async eliminarTag(user: User, idTag: number){
+		this.logger.log("eliminarTag");
+		const tag: any = classToPlain(await this.tagRepository
+		.createQueryBuilder()
+		.select("tag.id", "id")
+		.addSelect("tag.titulo", "titulo")
+		.addSelect("tag.proyectoId", "proyectoId")
+		.from(User, "user")
+		.addFrom(Proyecto, "proyecto")
+		.where("tag.id = :idTag", {idTag})
+		.andWhere("user.id = :userId", {userId: user.id})
+		.andWhere("tag.proyectoId = proyecto.id")
+		.andWhere("proyecto.usuarioId = user.id")
+		.execute())
+
+		if (tag[0] !== null && tag.length > 0) {
+			await this.tagRepository
+			.createQueryBuilder()
+			.delete()
+			.where("id = :id", {id: idTag})
+			.execute()
+		}
+	}
+
+	async createTag(tag: Tag, user: User, idProyecto: number){
+		this.logger.log("crearTag");
+		this.tagRepository
+		.createQueryBuilder()
+		.insert()
+		.values({
+			titulo: tag.titulo,
+			proyecto: {
+				id: idProyecto,
+			},
+		})
+		.execute();
 	}
 }

@@ -45,4 +45,18 @@ export class TagController {
 			this.tagService.updateSimpleTag(request.user, element, request.params.idProyecto);
 		})
 	}
+
+	@ApiOperation({ title: "Eliminar TAG" })
+	@ApiResponse({ status: 201, description: "ok" })
+	@Delete("eliminarTag/:idTag")
+	async eliminarTag(@Param("idTag") id: number, @Request() request) {
+		this.tagService.eliminarTag(request.user, id)
+	}
+
+	@ApiOperation({ title: "Crear TAG" })
+	@ApiResponse({ status: 201, description: "ok" })
+	@Post("createTag/:idProyecto")
+	async createTag(@Body() tag: Tag, @Request() request) {
+		this.tagService.createTag(tag, request.user, request.params.idProyecto)
+	}
 }

@@ -27,6 +27,8 @@ export class TagModule implements NestModule {
 			.forRoutes(
 				{ path: "tag/getAllTag/:id", method: RequestMethod.GET },
 				{ path: "tag/updateSimpleTag/:idProyecto", method: RequestMethod.PUT },
+				{ path: "tag/eliminarTag/:idTag", method: RequestMethod.DELETE },
+				{ path: "tag/createTag/:idTag", method: RequestMethod.POST },
 			);
 	}
 }
