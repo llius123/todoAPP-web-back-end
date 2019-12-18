@@ -41,3 +41,14 @@ export class ProyectoSwagger {
 	@ApiModelProperty({ example: 1, description: "usuarioId PROYECTO" })
 	usuarioId: number;
 }
+
+export class TagSwagger {
+	@ApiModelProperty({ example: 1, description: "Id TAG" })
+	id: number;
+
+	@ApiModelProperty({ example: "Titulo", description: "Titulo PROYECTO" })
+	titulo: string;
+
+	@ApiModelProperty({ example: 1, description: "proyectoId PROYECTO" })
+	proyectoId: number;
+}
