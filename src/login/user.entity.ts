@@ -10,7 +10,6 @@ export class User {
 	username: string;
 
 	@Column()
-	@JoinColumn({name: "password"})
 	password: string;
 
 	@OneToMany(type => Proyecto, proyecto => proyecto.id, {
