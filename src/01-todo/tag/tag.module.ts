@@ -18,7 +18,7 @@ import { TagService } from "./tag.service";
 		GlobalModule,
 	],
 	controllers: [TagController],
-	providers: [TagService, LoginService],
+	providers: [TagService, LoginService]
 })
 export class TagModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {

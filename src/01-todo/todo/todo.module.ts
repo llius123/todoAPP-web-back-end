@@ -14,18 +14,24 @@ import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthMiddleware } from "../../global/auth.middleware";
+import { TagModule } from "../tag/tag.module";
+import { TagService } from "../tag/tag.service";
+import { Tag } from "../tag/entity/tag.entity";
+import { Tag_Todo } from "../tag_todo/entity/tag_todo.entity";
+import { TagTodoService } from "../tag_todo/tag_service.service";
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([Todo]),
+		TypeOrmModule.forFeature([Todo, Tag]),
 		JwtModule.register({
 			secret: environment.secret,
 			signOptions: { expiresIn: environment.expiresIn },
 		}),
 		GlobalModule,
+		TagModule
 	],
 	controllers: [TodoController, LoginController],
-	providers: [TodoService, LoginService],
+	providers: [TodoService, LoginService, TagService],
 })
 export class TodoModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {

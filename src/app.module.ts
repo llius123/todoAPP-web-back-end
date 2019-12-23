@@ -12,6 +12,7 @@ import { ProyectoModule } from "./01-todo/proyecto/proyecto.module";
 import { Proyecto } from "./01-todo/proyecto/entity/proyecto.index";
 import { TagModule } from "./01-todo/tag/tag.module";
 import { Tag } from "./01-todo/tag/entity/tag.entity";
+import { Tag_Todo } from "./01-todo/tag_todo/entity/tag_todo.entity";
 
 @Module({
 	imports: [
@@ -32,7 +33,7 @@ import { Tag } from "./01-todo/tag/entity/tag.entity";
 			username: "root",
 			password: "",
 			database: "todoAPP",
-			entities: [Todo, Proyecto, User, Tag],
+			entities: [Todo, Proyecto, User, Tag, Tag_Todo],
 			synchronize: true,
 		}),
 		LoginModule,

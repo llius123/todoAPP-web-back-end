@@ -1,11 +1,16 @@
 import { Todo } from "./entity/todo.entity";
 import { User } from "../../login/user.entity";
 
-import { Injectable, Logger, Scope } from "@nestjs/common";
+import { Injectable, Logger, Scope, Inject, HttpStatus, HttpException } from "@nestjs/common";
 import { Connection, Repository, createQueryBuilder } from "typeorm";
 import { OrdenarTodo } from "./entity/todo.index";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Proyecto } from "../proyecto/entity/proyecto.entity";
+import { TodoInterface } from "./entity/todo.interface";
+import { TagService } from "../tag/tag.service";
+import { TagInterface } from "../tag/entity/tag.interface";
+import { Tag } from "../tag/entity/tag.entity";
+import { Tag_Todo } from './../tag_todo/entity/tag_todo.entity';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TodoService {
@@ -13,8 +18,10 @@ export class TodoService {
 
 	constructor(
 		@InjectRepository(Todo)
+		@InjectRepository(Tag_Todo)
 		private readonly todoRepository: Repository<Todo>,
-		private connection: Connection,
+		private readonly connection: Connection,
+		private readonly tagService: TagService,
 	) {}
 
 	async getAllTodo(usuario: User, proyecto: number) {
@@ -59,7 +66,7 @@ export class TodoService {
 		}
 	}
 
-	async updateSimpleTodo(usuario: User, data: Todo, idProyecto: number) {
+	async updateSimpleTodo(usuario: User, data: TodoInterface, idProyecto: number) {
 		this.logger.log("updateSimpleTodo");
 		const todo = await this.todoRepository
 			.createQueryBuilder()
@@ -86,35 +93,82 @@ export class TodoService {
 		}
 	}
 
-	async createTodo(usuario: User, todo: Todo, idProyecto: number) {
+	async createTodo(usuario: User, todo: TodoInterface, idProyecto: number) {
+		this.logger.log("createTodo");
+
+		//Compruebo si los tags existen para crear el todo
+		const tag: TagInterface[] = [];
+		if (todo.tag.length > 0) {
+			// tslint:disable-next-line: prefer-for-of
+			for (let index = 0; index < todo.tag.length; index++) {
+				const tagBuscado = await this.tagService.getSimpleTag(todo.tag[index].id);
+				tag.push(tagBuscado[0]);
+			}
+		}
+		//Si hay tags en el objeto pero por alguna razon no pertenecen a este usuario/proyecto cancelo la operacion
+		if (todo.tag.length > 0 && (tag.length === 0 || tag[0] === undefined)) {
+			throw new HttpException(
+				{
+					message: "Input data validation failed",
+					errors: 'Tag: error',
+				},
+				HttpStatus.BAD_REQUEST,
+			);
+		}
+		//Obtengo el orden del ultimo TODO y le sumo 1
+		const getMaxOrden = await this.todoRepository
+			.createQueryBuilder()
+			.createQueryBuilder()
+			.select("MAX(todo.orden)", "orden")
+			.addFrom(Todo, "todo")
+			.addFrom(Proyecto, "proyecto")
+			.addFrom(User, "user")
+			.where("todo.proyectoId = :proyectoId", { proyectoId: idProyecto })
+			.andWhere("user.id = usuarioId", { usuarioId: usuario.id })
+			.andWhere("user.id = proyecto.usuarioId")
+			.execute();
+		//Aumento +1 el orden
+		const aumentarMaxOrden = getMaxOrden[0].orden + 1;
+		//Inserto el nuevo registro
+		await this.todoRepository
+			.createQueryBuilder()
+			.insert()
+			.values({
+				titulo: todo.titulo,
+				descripcion: todo.descripcion,
+				orden: aumentarMaxOrden,
+				completado: todo.completado,
+				proyecto: {
+					id: idProyecto,
+				},
+			})
+			.execute();
+		//Obtengo el registro insertado
+		const todoId = await this.todoRepository
+			.createQueryBuilder()
+			.select("MAX(todo.id)", "id")
+			.addFrom(Proyecto, "proyecto")
+			.addFrom(User, "user")
+			.where("todo.proyectoId = :proyectoId", { proyectoId: idProyecto })
+			.andWhere("user.id = usuarioId", { usuarioId: usuario.id })
+			.andWhere("user.id = proyecto.usuarioId")
+			.execute();
+		//Inserto los tags en la tabla correspondiente
+		// tslint:disable-next-line: prefer-for-of
+		for (let index = 0; index < todo.tag.length; index++) {
+			await createQueryBuilder(Tag_Todo)
+			.insert()
+			.values({
+				todo: {
+					id: todoId[0],
+				},
+				tag: {
+					id: todo.tag[index].id,
+				},
+			})
+			.execute();
+		}
 		await this.connection.transaction(async transaction => {
-			this.logger.log("createTodo");
-			// Obtengo el orden del ultimo TODO y le sumo 1
-			let getMaxOrden = await transaction
-				.createQueryBuilder()
-				.select("MAX(todo.orden)", "orden")
-				.addFrom(Todo, "todo")
-				.addFrom(Proyecto, "proyecto")
-				.addFrom(User, "user")
-				.where("todo.proyectoId = :proyectoId", { proyectoId: idProyecto })
-				.andWhere("user.id = usuarioId", { usuarioId: usuario.id })
-				.andWhere("user.id = proyecto.usuarioId")
-				.execute();
-			getMaxOrden = getMaxOrden[0].orden + 1;
-			// Inserto el nuevo registro
-			await transaction
-				.createQueryBuilder(Todo, "todo")
-				.insert()
-				.values({
-					titulo: todo.titulo,
-					descripcion: todo.descripcion,
-					orden: getMaxOrden,
-					completado: todo.completado,
-					proyecto: {
-						id: idProyecto,
-					},
-				})
-				.execute();
 		});
 	}
 

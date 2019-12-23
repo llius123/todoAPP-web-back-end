@@ -5,6 +5,7 @@ import { Tag } from "./entity/tag.entity";
 import { User } from "../../login/user.entity";
 import { Proyecto } from "../proyecto/entity/proyecto.index";
 import { classToPlain } from "class-transformer";
+import { TagInterface } from "./entity/tag.interface";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TagService {
@@ -90,6 +91,14 @@ export class TagService {
 				id: idProyecto,
 			},
 		})
+		.execute();
+	}
+
+	async getSimpleTag(id: number): Promise<TagInterface[]>{
+		this.logger.log("crearTag");
+		return this.tagRepository
+		.createQueryBuilder()
+		.where("id = :id", {id: id})
 		.execute();
 	}
 }
