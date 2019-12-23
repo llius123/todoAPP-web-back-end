@@ -23,13 +23,13 @@ export class TagService {
 		.createQueryBuilder()
 		.select("tag.id", "id")
 		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyectoId", "proyectoId")
+		.addSelect("tag.proyecto_id", "proyecto_id")
 		.from(User, "user")
 		.addFrom(Proyecto, "proyecto")
-		.where("proyecto.id = :proyectoId", {proyectoId: idProyecto})
+		.where("proyecto.id = :proyecto_id", {proyecto_id: idProyecto})
 		.andWhere("user.id = :userId", {userId: user.id})
-		.andWhere("user.id = proyecto.usuarioId")
-		.andWhere("proyecto.id = tag.proyectoId").execute();
+		.andWhere("user.id = proyecto.usuario_id")
+		.andWhere("proyecto.id = tag.proyecto_id").execute();
 	}
 
 	async updateSimpleTag(usuario: User, data: Tag, idProyecto: number) {
@@ -39,9 +39,9 @@ export class TagService {
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
 			.where("user.id = :userId", { userId: usuario.id })
-			.andWhere("tag.id = :tagId", { tagId: data.id })
-			.andWhere("proyecto.id = :proyectoId", { proyectoId: idProyecto })
-			.andWhere("user.id = proyecto.usuarioId")
+			.andWhere("tag.id = :tag_id", { tag_id: data.id })
+			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
 		if (todo[0] !== null && todo.length > 0) {
 			await this.tagRepository
@@ -51,7 +51,7 @@ export class TagService {
 					id: data.id,
 					titulo: data.titulo,
 				})
-				.where("id = :todoId", { todoId: data.id })
+				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
 		}
 	}
@@ -62,13 +62,13 @@ export class TagService {
 		.createQueryBuilder()
 		.select("tag.id", "id")
 		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyectoId", "proyectoId")
+		.addSelect("tag.proyecto_id", "proyecto_id")
 		.from(User, "user")
 		.addFrom(Proyecto, "proyecto")
 		.where("tag.id = :idTag", {idTag})
 		.andWhere("user.id = :userId", {userId: user.id})
-		.andWhere("tag.proyectoId = proyecto.id")
-		.andWhere("proyecto.usuarioId = user.id")
+		.andWhere("tag.proyecto_id = proyecto.id")
+		.andWhere("proyecto.usuario_id = user.id")
 		.execute())
 
 		if (tag[0] !== null && tag.length > 0) {

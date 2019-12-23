@@ -33,12 +33,12 @@ export class TodoService {
 			.addSelect("todo.descripcion", "descripcion")
 			.addSelect("todo.orden", "orden")
 			.addSelect("todo.completado", "completado")
-			.addSelect("todo.proyectoId", "proyectoId")
+			.addSelect("todo.proyecto_id", "proyecto_id")
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
-			.where("proyecto.usuarioId = :usuarioId", { usuarioId: usuario.id })
-			.andWhere("proyecto.id = :proyectoId", { proyectoId: proyecto })
-			.andWhere("proyecto.id = todo.proyectoId")
+			.where("proyecto.usuario_id = :usuario_id", { usuario_id: usuario.id })
+			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: proyecto })
+			.andWhere("proyecto.id = todo.proyecto_id")
 			.groupBy("todo.id")
 			.orderBy("todo.orden")
 			.execute();
@@ -49,19 +49,19 @@ export class TodoService {
 		const todo = await this.todoRepository
 			.createQueryBuilder()
 			.addFrom(Proyecto, "proyecto")
-			.addFrom(User, "user")
-			.where("user.id = :userId", { userId: usuario.id })
-			.andWhere("todo.id = :todoId", { todoId: data.id })
-			.andWhere("proyecto.id = :proyectoId", { proyectoId: idProyecto })
-			.andWhere("user.id = proyecto.usuarioId")
-			.andWhere("proyecto.id = todo.proyectoId")
+			.addFrom(User, "usuario")
+			.where("usuario.id = :userId", { userId: usuario.id })
+			.andWhere("todo.id = :todo_id", { todo_id: data.id })
+			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("usuario.id = proyecto.usuario_id")
+			.andWhere("proyecto.id = todo.proyecto_id")
 			.execute();
 		if (todo[0] !== null && todo.length > 0) {
 			await this.todoRepository
 				.createQueryBuilder()
 				.update(Todo)
 				.set({ orden: data.orden })
-				.where("id = :todoId", { todoId: data.id })
+				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
 		}
 	}
@@ -73,10 +73,10 @@ export class TodoService {
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
 			.where("user.id = :userId", { userId: usuario.id })
-			.andWhere("todo.id = :todoId", { todoId: data.id })
-			.andWhere("proyecto.id = :proyectoId", { proyectoId: idProyecto })
-			.andWhere("user.id = proyecto.usuarioId")
-			.andWhere("proyecto.id = todo.proyectoId")
+			.andWhere("todo.id = :todo_id", { todo_id: data.id })
+			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = proyecto.usuario_id")
+			.andWhere("proyecto.id = todo.proyecto_id")
 			.execute();
 		if (todo[0] !== null && todo.length > 0) {
 			await this.todoRepository
@@ -88,7 +88,7 @@ export class TodoService {
 					descripcion: data.descripcion,
 					completado: data.completado,
 				})
-				.where("id = :todoId", { todoId: data.id })
+				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
 		}
 	}
@@ -123,9 +123,9 @@ export class TodoService {
 			.addFrom(Todo, "todo")
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
-			.where("todo.proyectoId = :proyectoId", { proyectoId: idProyecto })
-			.andWhere("user.id = usuarioId", { usuarioId: usuario.id })
-			.andWhere("user.id = proyecto.usuarioId")
+			.where("todo.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = usuario_id", { usuario_id: usuario.id })
+			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
 		//Aumento +1 el orden
 		const aumentarMaxOrden = getMaxOrden[0].orden + 1;
@@ -144,14 +144,14 @@ export class TodoService {
 			})
 			.execute();
 		//Obtengo el registro insertado
-		const todoId = await this.todoRepository
+		const todo_id = await this.todoRepository
 			.createQueryBuilder()
 			.select("MAX(todo.id)", "id")
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
-			.where("todo.proyectoId = :proyectoId", { proyectoId: idProyecto })
-			.andWhere("user.id = usuarioId", { usuarioId: usuario.id })
-			.andWhere("user.id = proyecto.usuarioId")
+			.where("todo.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = usuario_id", { usuario_id: usuario.id })
+			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
 		//Inserto los tags en la tabla correspondiente
 		// tslint:disable-next-line: prefer-for-of
@@ -160,7 +160,7 @@ export class TodoService {
 			.insert()
 			.values({
 				todo: {
-					id: todoId[0],
+					id: todo_id[0].id,
 				},
 				tag: {
 					id: todo.tag[index].id,
@@ -180,8 +180,8 @@ export class TodoService {
 			.addFrom(Proyecto, "p")
 			.addFrom(Todo, "t")
 			.where("t.id = :idTodo", { idTodo: id })
-			.andWhere("u.id = p.usuarioId")
-			.andWhere("p.id = t.proyectoId")
+			.andWhere("u.id = p.usuario_id")
+			.andWhere("p.id = t.proyecto_id")
 			.andWhere("u.id = :idUsuario", { idUsuario: usuario.id })
 			.execute();
 

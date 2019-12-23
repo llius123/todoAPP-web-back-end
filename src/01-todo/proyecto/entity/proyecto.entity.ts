@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../../../login/user.entity";
 @Entity()
 export class Proyecto {
@@ -12,5 +12,6 @@ export class Proyecto {
 		onUpdate: "NO ACTION",
 		onDelete: "NO ACTION",
 	})
+	@JoinColumn({name: 'usuario_id'})
 	usuario: User;
 }

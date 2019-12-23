@@ -1,7 +1,7 @@
 import { Proyecto } from "../01-todo/proyecto/entity/proyecto.entity";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from "typeorm";
 
-@Entity()
+@Entity({name: "usuario"})
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -10,6 +10,7 @@ export class User {
 	username: string;
 
 	@Column()
+	@JoinColumn({name: "password"})
 	password: string;
 
 	@OneToMany(type => Proyecto, proyecto => proyecto.id, {

@@ -34,7 +34,7 @@ import { Tag_Todo } from "./01-todo/tag_todo/entity/tag_todo.entity";
 			password: "",
 			database: "todoAPP",
 			entities: [Todo, Proyecto, User, Tag, Tag_Todo],
-			synchronize: true,
+			synchronize: true
 		}),
 		LoginModule,
 		GlobalModule,

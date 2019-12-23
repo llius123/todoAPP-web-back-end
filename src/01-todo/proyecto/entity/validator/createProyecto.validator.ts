@@ -18,5 +18,5 @@ export class CreateProyecto {
 	titulo: string;
 
 	@IsEmpty()
-	usuarioId: number;
+	usuario_id: number;
 }

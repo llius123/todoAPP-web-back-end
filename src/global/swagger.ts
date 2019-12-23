@@ -16,8 +16,8 @@ export class TodoSwagger {
 	@ApiModelProperty({ example: true, description: "Boolean TODO" })
 	completado: boolean;
 
-	@ApiModelProperty({ example: 1, description: "ProyectoID TODO" })
-	proyectoId: number;
+	@ApiModelProperty({ example: 1, description: "proyecto_id TODO" })
+	proyecto_id: number;
 }
 
 export class UserSwagger {
@@ -38,8 +38,8 @@ export class ProyectoSwagger {
 	@ApiModelProperty({ example: "Titulo", description: "Titulo PROYECTO" })
 	titulo: string;
 
-	@ApiModelProperty({ example: 1, description: "usuarioId PROYECTO" })
-	usuarioId: number;
+	@ApiModelProperty({ example: 1, description: "usuario_id PROYECTO" })
+	usuario_id: number;
 }
 
 export class TagSwagger {
@@ -49,6 +49,6 @@ export class TagSwagger {
 	@ApiModelProperty({ example: "Titulo", description: "Titulo PROYECTO" })
 	titulo: string;
 
-	@ApiModelProperty({ example: 1, description: "proyectoId PROYECTO" })
-	proyectoId: number;
+	@ApiModelProperty({ example: 1, description: "proyecto_id PROYECTO" })
+	proyecto_id: number;
 }

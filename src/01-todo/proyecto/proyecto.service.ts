@@ -20,11 +20,11 @@ export class ProyectoService {
 			.createQueryBuilder()
 			.select("proyecto.id", "id")
 			.addSelect("proyecto.titulo", "titulo")
-			.addSelect("proyecto.usuarioId", "usuarioId")
+			.addSelect("proyecto.usuario_id", "usuario_id")
 			.addFrom(User, "user")
 			.addFrom(Proyecto, "proyecto")
-			.where("proyecto.usuarioId = :idUsuario", { idUsuario: usuario.id })
-			.andWhere("user.id = proyecto.usuarioId")
+			.where("proyecto.usuario_id = :idUsuario", { idUsuario: usuario.id })
+			.andWhere("user.id = proyecto.usuario_id")
 			.groupBy("proyecto.id")
 			.execute();
 	}
@@ -47,18 +47,18 @@ export class ProyectoService {
 			.select("MAX(proyecto.id)", "id")
 			.from(User, "user")
 			.where("user.id = :userId", { userId: usuario.id })
-			.andWhere("user.id = proyecto.usuarioId")
+			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
 
 		return await this.proyectoRepository
 			.createQueryBuilder()
 			.select("proyecto.id", "id")
 			.addSelect("proyecto.titulo", "titulo")
-			.addSelect("proyecto.usuarioId", "usuarioId")
+			.addSelect("proyecto.usuario_id", "usuario_id")
 			.from(User, "user")
-			.where("user.id = :usuarioId", { usuarioId: usuario.id })
-			.andWhere("proyecto.id = :proyectoId", { proyectoId: id[0].id })
-			.andWhere("user.id = proyecto.usuarioId")
+			.where("user.id = :usuario_id", { usuario_id: usuario.id })
+			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: id[0].id })
+			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
 	}
 

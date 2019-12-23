@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { Proyecto } from "../../proyecto/entity/proyecto.entity";
 
 @Entity()
@@ -13,5 +13,6 @@ export class Tag {
 		onUpdate: "NO ACTION",
 		onDelete: "CASCADE",
 	})
+	@JoinColumn({name: "proyecto_id"})
 	proyecto: Proyecto;
 }

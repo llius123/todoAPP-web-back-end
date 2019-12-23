@@ -16,11 +16,18 @@ export class LoginService {
 		private jwtGlobalService: JwtGlobalService,
 	) {}
 	async login(user: string, pass: string) {
+		console.log(await this.connection
+			.createQueryBuilder(User, "usuario")
+			.select(["usuario.id", "usuario.username", "usuario.password"])
+			.where("usuario.username = :user and usuario.password = :pass", {
+				user,
+				pass,
+			})
+			.getQueryAndParameters())
 		return await this.connection
-			.getRepository(User)
-			.createQueryBuilder("user")
-			.select(["user.id", "user.username", "user.password"])
-			.where("user.username = :user and user.password = :pass", {
+			.createQueryBuilder(User, "usuario")
+			.select(["usuario.id", "usuario.username", "usuario.password"])
+			.where("usuario.username = :user and usuario.password = :pass", {
 				user,
 				pass,
 			})

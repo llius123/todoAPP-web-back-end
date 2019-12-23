@@ -14,6 +14,6 @@ export class TagUpdate {
 
 	@IsNotEmpty()
 	@IsInt()
-	proyectoId: number;
+	proyecto_id: number;
 
 }
