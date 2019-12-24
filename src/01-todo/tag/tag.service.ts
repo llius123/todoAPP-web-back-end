@@ -46,9 +46,8 @@ export class TagService {
 		if (todo[0] !== null && todo.length > 0) {
 			await this.tagRepository
 				.createQueryBuilder()
-				.update(Tag)
+				.update()
 				.set({
-					id: data.id,
 					titulo: data.titulo,
 				})
 				.where("id = :todo_id", { todo_id: data.id })

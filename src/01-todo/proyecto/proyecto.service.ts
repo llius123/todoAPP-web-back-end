@@ -17,12 +17,11 @@ export class ProyectoService {
 	async getAllProyecto(usuario: User): Promise<Proyecto[]> {
 		this.logger.log("getAllProyecto");
 		return await this.proyectoRepository
-			.createQueryBuilder()
+			.createQueryBuilder("proyecto")
 			.select("proyecto.id", "id")
 			.addSelect("proyecto.titulo", "titulo")
 			.addSelect("proyecto.usuario_id", "usuario_id")
 			.addFrom(User, "user")
-			.addFrom(Proyecto, "proyecto")
 			.where("proyecto.usuario_id = :idUsuario", { idUsuario: usuario.id })
 			.andWhere("user.id = proyecto.usuario_id")
 			.groupBy("proyecto.id")

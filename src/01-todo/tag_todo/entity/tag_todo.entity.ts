@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Unique, Index, Exclusion, ManyToMany, ManyToOne } from "typeorm";
 import { Todo } from "../../todo/entity/todo.entity";
 import { Tag } from "../../tag/entity/tag.entity";
 
@@ -8,17 +8,17 @@ export class Tag_Todo {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToOne(type => Todo, {
+	@ManyToOne(type => Todo, {
 		onUpdate: "NO ACTION",
-		onDelete: "NO ACTION",
+		onDelete: "CASCADE",
 	})
     @JoinColumn({name: "todo_id"})
 	todo: Todo;
 
-	@OneToOne(type => Tag,{
+	@ManyToOne(type => Tag,{
 		onUpdate: "NO ACTION",
-		onDelete: "NO ACTION",
+		onDelete: "CASCADE",
 	})
-    @JoinColumn({name: "tag_id"})
+	@JoinColumn({name: "tag_id"})
     tag: Tag;
 }
