@@ -18,7 +18,7 @@ import { TagModule } from "../tag/tag.module";
 import { TagService } from "../tag/tag.service";
 import { Tag } from "../tag/entity/tag.entity";
 import { Tag_Todo } from "../tag_todo/entity/tag_todo.entity";
-import { TagTodoService } from "../tag_todo/tag_service.service";
+import { TagTodoService } from "../tag_todo/tag_todo.service";
 
 @Module({
 	imports: [
