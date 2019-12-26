@@ -24,6 +24,7 @@ export class LoginController {
 		const userLogged: any = await this.loginService.login(user, pass);
 		if (userLogged !== undefined) {
 			return {
+				id: userLogged.id,
 				username: userLogged.username,
 				access_token: this.jwtService.sign(
 					JSON.parse(JSON.stringify(userLogged)),

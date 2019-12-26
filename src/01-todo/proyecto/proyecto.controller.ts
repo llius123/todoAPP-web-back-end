@@ -8,6 +8,7 @@ import {
 	Body,
 	Delete,
 	UsePipes,
+	HttpCode,
 } from "@nestjs/common";
 import {
 	ApiBearerAuth,
@@ -38,6 +39,7 @@ export class ProyectoController {
 	@ApiResponse({ status: 201, type: ProyectoSwagger })
 	@UsePipes(new ValidationPipe(CreateProyecto))
 	@Post("createProyecto")
+	@HttpCode(200)
 	async createProyecto(@Body() proyecto: Proyecto, @Request() request) {
 		return this.proyectoService.createProyecto(request.user, proyecto);
 	}
@@ -46,6 +48,6 @@ export class ProyectoController {
 	@ApiResponse({ status: 201, type: "Ok" })
 	@Delete("eliminarProyecto/:idProyecto")
 	async eliminarProyecto(@Param("idProyecto") id: number, @Request() request) {
-		this.proyectoService.eliminarProyecto(request.user, id);
+		return this.proyectoService.eliminarProyecto(request.user, id);
 	}
 }

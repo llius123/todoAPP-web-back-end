@@ -63,7 +63,7 @@ export class ProyectoService {
 
 	async eliminarProyecto(usuario: User, idProyecto: number) {
 		this.logger.log("eliminarProyecto");
-		await this.proyectoRepository
+		return await this.proyectoRepository
 			.createQueryBuilder()
 			.delete()
 			.where("id = :id", { id: idProyecto })

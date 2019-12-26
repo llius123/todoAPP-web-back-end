@@ -57,6 +57,6 @@ export class TagController {
 	@ApiResponse({ status: 201, description: "ok" })
 	@Post("createTag/:idProyecto")
 	async createTag(@Body() tag: Tag, @Request() request) {
-		this.tagService.createTag(tag, request.user, request.params.idProyecto)
+		return this.tagService.createTag(tag, request.user, request.params.idProyecto)
 	}
 }

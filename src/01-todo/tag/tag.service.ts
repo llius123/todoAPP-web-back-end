@@ -81,7 +81,7 @@ export class TagService {
 
 	async createTag(tag: Tag, user: User, idProyecto: number){
 		this.logger.log("crearTag");
-		this.tagRepository
+		await this.tagRepository
 		.createQueryBuilder()
 		.insert()
 		.values({
@@ -90,6 +90,19 @@ export class TagService {
 				id: idProyecto,
 			},
 		})
+		.execute();
+
+		return await this.tagRepository
+		.createQueryBuilder()
+		.select("MAX(tag.id)", "id")
+		.addSelect("tag.titulo", "titulo")
+		.addSelect("tag.proyecto_id", "proyecto_id")
+		.addFrom(Proyecto, "proyecto")
+		.addFrom(User, "user")
+		.where("tag.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
+		.andWhere("user.id = usuario_id", { usuario_id: user.id })
+		.andWhere("user.id = proyecto.usuario_id")
+		.limit(1)
 		.execute();
 	}
 

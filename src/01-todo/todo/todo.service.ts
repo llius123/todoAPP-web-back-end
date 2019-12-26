@@ -118,7 +118,6 @@ export class TodoService {
 		//Obtengo el orden del ultimo TODO y le sumo 1
 		const getMaxOrden = await this.todoRepository
 			.createQueryBuilder()
-			.createQueryBuilder()
 			.select("MAX(todo.orden)", "orden")
 			.addFrom(Todo, "todo")
 			.addFrom(Proyecto, "proyecto")
