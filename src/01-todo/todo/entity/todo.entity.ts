@@ -19,7 +19,7 @@ export class Todo {
 	completado: number;
 
 	@ManyToOne(type => Proyecto, proyecto => proyecto.id, {
-		onUpdate: "NO ACTION",
+		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
 	@JoinColumn({name: 'proyecto_id'})

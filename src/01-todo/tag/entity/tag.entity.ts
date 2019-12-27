@@ -10,9 +10,9 @@ export class Tag {
 	titulo: string;
 
 	@ManyToOne(type => Proyecto, proyecto => proyecto.id, {
-		onUpdate: "NO ACTION",
+		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
-	@JoinColumn({name: "proyecto_id"})
+	@JoinColumn([{name: "proyecto_id"}])
 	proyecto: Proyecto;
 }

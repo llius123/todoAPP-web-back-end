@@ -52,7 +52,14 @@ export class TagService {
 				})
 				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
-		}
+			return await this.tagRepository
+				.createQueryBuilder()
+				.select("id")
+				.addSelect("titulo")
+				.addSelect("proyecto_id")
+				.where("id = :id", {id: todo[0].Tag_id})
+				.execute();
+				}
 	}
 
 	async eliminarTag(user: User, idTag: number){

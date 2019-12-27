@@ -9,8 +9,8 @@ export class Proyecto {
 	titulo: string;
 
 	@ManyToOne(type => User, usuario => usuario.id, {
-		onUpdate: "NO ACTION",
-		onDelete: "NO ACTION",
+		onUpdate: "CASCADE",
+		onDelete: "CASCADE",
 	})
 	@JoinColumn({name: 'usuario_id'})
 	usuario: User;

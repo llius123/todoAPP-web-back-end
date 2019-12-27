@@ -13,8 +13,8 @@ export class User {
 	password: string;
 
 	@OneToMany(type => Proyecto, proyecto => proyecto.id, {
-		onUpdate: "NO ACTION",
-		onDelete: "NO ACTION",
+		onUpdate: "CASCADE",
+		onDelete: "CASCADE",
 	})
 	proyecto: Proyecto[];
 }

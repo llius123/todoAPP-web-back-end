@@ -98,7 +98,7 @@ export class TodoService {
 
 		//Compruebo si los tags existen para crear el todo
 		const tag: TagInterface[] = [];
-		if (todo.tag.length > 0) {
+		if (todo.tag && todo.tag.length > 0) {
 			// tslint:disable-next-line: prefer-for-of
 			for (let index = 0; index < todo.tag.length; index++) {
 				const tagBuscado = await this.tagService.getSimpleTag(todo.tag[index].id);
@@ -106,7 +106,7 @@ export class TodoService {
 			}
 		}
 		//Si hay tags en el objeto pero por alguna razon no pertenecen a este usuario/proyecto cancelo la operacion
-		if (todo.tag.length > 0 && (tag.length === 0 || tag[0] === undefined)) {
+		if (todo.tag && todo.tag.length > 0 && (tag.length === 0 || tag[0] === undefined)) {
 			throw new HttpException(
 				{
 					message: "Input data validation failed",
@@ -119,7 +119,6 @@ export class TodoService {
 		const getMaxOrden = await this.todoRepository
 			.createQueryBuilder()
 			.select("MAX(todo.orden)", "orden")
-			.addFrom(Todo, "todo")
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
 			.where("todo.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
@@ -143,7 +142,7 @@ export class TodoService {
 			})
 			.execute();
 		//Obtengo el registro insertado
-		const todo_id = await this.todoRepository
+		const nuevoTodo = await this.todoRepository
 			.createQueryBuilder()
 			.select("MAX(todo.id)", "id")
 			.addFrom(Proyecto, "proyecto")
@@ -154,35 +153,36 @@ export class TodoService {
 			.execute();
 		//Inserto los tags en la tabla correspondiente
 		// tslint:disable-next-line: prefer-for-of
-		for (let index = 0; index < todo.tag.length; index++) {
-			await createQueryBuilder(Tag_Todo)
-			.insert()
-			.values({
-				todo: {
-					id: todo_id[0].id,
-				},
-				tag: {
-					id: todo.tag[index].id,
-				},
-			})
-			.execute();
+		if(tag.length){
+			for (let index = 0; index < todo.tag.length; index++) {
+				await createQueryBuilder(Tag_Todo)
+				.insert()
+				.values({
+					todo: {
+						id: nuevoTodo[0].id,
+					},
+					tag: {
+						id: todo.tag[index].id,
+					},
+				})
+				.execute();
+			}
 		}
-		await this.connection.transaction(async transaction => {
-		});
 	}
 
 	async eliminarTodo(usuario: User, id: number) {
 		this.logger.log("eliminarTodo");
 
-		const todo: [any] = await createQueryBuilder()
-			.from(User, "u")
-			.addFrom(Proyecto, "p")
-			.addFrom(Todo, "t")
-			.where("t.id = :idTodo", { idTodo: id })
-			.andWhere("u.id = p.usuario_id")
-			.andWhere("p.id = t.proyecto_id")
-			.andWhere("u.id = :idUsuario", { idUsuario: usuario.id })
-			.execute();
+		// const todo: [any] = await createQueryBuilder()
+		// 	.from(User, "u")
+		// 	.addFrom(Proyecto, "p")
+		// 	.addFrom(Todo, "t")
+		// 	.where("t.id = :idTodo", { idTodo: id })
+		// 	.andWhere("u.id = p.usuario_id")
+		// 	.andWhere("p.id = t.proyecto_id")
+		// 	.andWhere("u.id = :idUsuario", { idUsuario: usuario.id })
+		// 	.execute();
+		const todo: [any] = await this.getSimpleTodo(id);
 
 		if (todo[0] !== null && todo.length > 0) {
 			await this.todoRepository
@@ -195,5 +195,31 @@ export class TodoService {
 		} else {
 			return { msg: "Error" };
 		}
+	}
+
+	private async getSimpleTodo(idTodo: number){
+		const todo: [any] = await this.todoRepository
+		.createQueryBuilder()
+		.select("todo.id", "id")
+		.addSelect("todo.titulo", "titulo")
+		.addSelect("todo.descripcion", "descripcion")
+		.addSelect("todo.orden", "orden")
+		.addSelect("todo.completado", "completado")
+		.addSelect("todo.proyecto_id", "proyecto_id")
+		.addFrom(Todo, "t")
+		.where("t.id = :idTodo", { idTodo: idTodo })
+		.execute();
+		
+		const tag: [any] = await createQueryBuilder()
+		.select("tag.id", "id")
+		.addSelect("tag.titulo", "titulo")
+		.addSelect("tag.proyecto_id", "proyecto_id")
+		.from(Tag, "tag")
+		.addFrom(Tag_Todo, "tag_todo")
+		.where("tag_todo.tag_id = tag.id")
+		.andWhere("tag_todo.todo_id = :todoId", {todoId: idTodo})
+		.execute();
+		
+		return {...todo[0], ...tag};
 	}
 }

@@ -10,13 +10,7 @@ import { Entity } from "typeorm";
 
 @Entity()
 export class CreateProyecto {
-	@IsEmpty()
-	id: number;
-
 	@IsNotEmpty()
 	@IsString()
 	titulo: string;
-
-	@IsEmpty()
-	usuario_id: number;
 }

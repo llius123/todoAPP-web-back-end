@@ -22,6 +22,7 @@ import {
 import { TagService } from "./tag.service";
 import { Tag } from "./entity/tag.entity";
 import { TagUpdate } from "./entity/validator/updateTag.validator";
+import { plainToClass, classToClass, classToPlain } from 'class-transformer';
 
 @ApiBearerAuth()
 @ApiUseTags("TAG")
@@ -37,13 +38,15 @@ export class TagController {
 	}
 
 	@ApiOperation({ title: "Update simple TAG" })
-	@ApiResponse({ status: 201, description: "ok" })
+	@ApiResponse({ status: 201, type: [TagSwagger] })
 	@UsePipes(new ValidationArrayPipe(TagUpdate))
 	@Put("updateSimpleTag/:idProyecto")
 	async updateSimpleTag( @Body() tag: Tag[], @Request() request) {
-		tag.forEach(element => {
-			this.tagService.updateSimpleTag(request.user, element, request.params.idProyecto);
-		})
+		let tagsUpdated = [];
+		await Promise.all(tag.map(async (element) => {
+			await this.tagService.updateSimpleTag(request.user,element, request.params.idProyecto).then(resp => tagsUpdated.push(resp[0]));
+		}));
+		return tagsUpdated;
 	}
 
 	@ApiOperation({ title: "Eliminar TAG" })

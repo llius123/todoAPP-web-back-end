@@ -9,14 +9,14 @@ export class Tag_Todo {
 	id: number;
 
 	@ManyToOne(type => Todo, {
-		onUpdate: "NO ACTION",
+		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
     @JoinColumn({name: "todo_id"})
 	todo: Todo;
 
 	@ManyToOne(type => Tag,{
-		onUpdate: "NO ACTION",
+		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
 	@JoinColumn({name: "tag_id"})
