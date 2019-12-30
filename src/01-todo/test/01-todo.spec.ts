@@ -82,14 +82,6 @@ describe('02-todo-tag', () => {
 		expect(tagCreado.body[0].titulo).toBe("EDITADO");
 		expect(tagCreado.body[0].proyecto_id).toBe(NUEVO_PROYECTO_MOCK.id);
 	});
-	// it('Eliminar un tag', async () => {
-	// 	const tagCreado = await request(BASE_URL)
-	// 		.delete('/tag/eliminarTag/' + TAG_MOCK.id)
-	// 		.set("Content-Type","application/json")
-	// 		.set('Authorization', JWT_MOCK)
-	// 		.send(USER_MOCK)
-	// 		.expect(200);
-	// });
 });
 describe('02-todo-todo', () => {
 	it('Crear un todo', async () => {
@@ -110,7 +102,6 @@ describe('02-todo-todo', () => {
 	});
 	it('Updateo un todo', async () => {
 		TODO_MOCK.titulo = "EDITADO";
-		console.log(TODO_MOCK, NUEVO_PROYECTO_MOCK)
 		const tagCreado = await request(BASE_URL)
 			.put('/todo/updateSimpleTodo/' + NUEVO_PROYECTO_MOCK.id)
 			.set("Content-Type","application/json")
