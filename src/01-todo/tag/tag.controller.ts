@@ -32,8 +32,8 @@ export class TagController {
 
 	@ApiOperation({ title: "Get all tag TAG" })
 	@ApiResponse({ status: 201, type: [TagSwagger] })
-	@Get("getAllTag/:id")
-	async getAllTag(@Param("id") id: number, @Request() request) {
+	@Get("getAllTag/:idProyecto")
+	async getAllTag(@Param("idProyecto") id: number, @Request() request) {
 		return this.tagService.getAllTag(request.user, id);
 	}
 
