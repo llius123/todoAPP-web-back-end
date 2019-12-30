@@ -1,5 +1,5 @@
-import { ValidationArrayPipe } from './../../global/pipes/validation.pipe';
-import { TagSwagger } from './../../global/swagger';
+import { ValidationArrayPipe } from "./../../global/pipes/validation.pipe";
+import { TagSwagger } from "./../../global/swagger";
 import {
 	Controller,
 	Get,
@@ -22,7 +22,7 @@ import {
 import { TagService } from "./tag.service";
 import { Tag } from "./entity/tag.entity";
 import { TagUpdate } from "./entity/validator/updateTag.validator";
-import { plainToClass, classToClass, classToPlain } from 'class-transformer';
+import { plainToClass, classToClass, classToPlain } from "class-transformer";
 
 @ApiBearerAuth()
 @ApiUseTags("TAG")
@@ -41,11 +41,15 @@ export class TagController {
 	@ApiResponse({ status: 201, type: [TagSwagger] })
 	@UsePipes(new ValidationArrayPipe(TagUpdate))
 	@Put("updateSimpleTag/:idProyecto")
-	async updateSimpleTag( @Body() tag: Tag[], @Request() request) {
-		let tagsUpdated = [];
-		await Promise.all(tag.map(async (element) => {
-			await this.tagService.updateSimpleTag(request.user,element, request.params.idProyecto).then(resp => tagsUpdated.push(resp[0]));
-		}));
+	async updateSimpleTag(@Body() tag: Tag[], @Request() request) {
+		const tagsUpdated = [];
+		await Promise.all(
+			tag.map(async element => {
+				await this.tagService
+					.updateSimpleTag(request.user, element, request.params.idProyecto)
+					.then(resp => tagsUpdated.push(resp[0]));
+			}),
+		);
 		return tagsUpdated;
 	}
 
@@ -53,13 +57,17 @@ export class TagController {
 	@ApiResponse({ status: 201, description: "ok" })
 	@Delete("eliminarTag/:idTag")
 	async eliminarTag(@Param("idTag") id: number, @Request() request) {
-		this.tagService.eliminarTag(request.user, id)
+		this.tagService.eliminarTag(request.user, id);
 	}
 
 	@ApiOperation({ title: "Crear TAG" })
 	@ApiResponse({ status: 201, description: "ok" })
 	@Post("createTag/:idProyecto")
 	async createTag(@Body() tag: Tag, @Request() request) {
-		return this.tagService.createTag(tag, request.user, request.params.idProyecto)
+		return this.tagService.createTag(
+			tag,
+			request.user,
+			request.params.idProyecto,
+		);
 	}
 }

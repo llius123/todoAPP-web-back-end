@@ -19,15 +19,13 @@ import { LoginService } from "../../login/login.service";
 })
 export class ProyectoModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {
-		consumer
-			.apply(AuthMiddleware)
-			.forRoutes(
-				{ path: "proyecto/getAllProyecto", method: RequestMethod.GET },
-				{ path: "proyecto/createProyecto", method: RequestMethod.POST },
-				{
-					path: "proyecto/eliminarProyecto/:idProyecto",
-					method: RequestMethod.DELETE,
-				},
-			);
+		consumer.apply(AuthMiddleware).forRoutes(
+			{ path: "proyecto/getAllProyecto", method: RequestMethod.GET },
+			{ path: "proyecto/createProyecto", method: RequestMethod.POST },
+			{
+				path: "proyecto/eliminarProyecto/:idProyecto",
+				method: RequestMethod.DELETE,
+			},
+		);
 	}
 }

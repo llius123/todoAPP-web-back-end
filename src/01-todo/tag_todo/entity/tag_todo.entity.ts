@@ -1,8 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, Unique, Index, Exclusion, ManyToMany, ManyToOne } from "typeorm";
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	OneToOne,
+	JoinColumn,
+	Unique,
+	Index,
+	Exclusion,
+	ManyToMany,
+	ManyToOne,
+} from "typeorm";
 import { Todo } from "../../todo/entity/todo.entity";
 import { Tag } from "../../tag/entity/tag.entity";
 
-@Entity({name: 'tag_todo'})
+@Entity({ name: "tag_todo" })
 // tslint:disable-next-line: class-name
 export class Tag_Todo {
 	@PrimaryGeneratedColumn()
@@ -12,13 +22,13 @@ export class Tag_Todo {
 		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
-    @JoinColumn({name: "todo_id"})
+	@JoinColumn({ name: "todo_id" })
 	todo: Todo;
 
-	@ManyToOne(type => Tag,{
+	@ManyToOne(type => Tag, {
 		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
-	@JoinColumn({name: "tag_id"})
-    tag: Tag;
+	@JoinColumn({ name: "tag_id" })
+	tag: Tag;
 }

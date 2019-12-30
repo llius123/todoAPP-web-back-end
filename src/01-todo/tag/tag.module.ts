@@ -13,12 +13,9 @@ import { LoginService } from "../../login/login.service";
 import { TagService } from "./tag.service";
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([Tag]),
-		GlobalModule,
-	],
+	imports: [TypeOrmModule.forFeature([Tag]), GlobalModule],
 	controllers: [TagController],
-	providers: [TagService, LoginService]
+	providers: [TagService, LoginService],
 })
 export class TagModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {

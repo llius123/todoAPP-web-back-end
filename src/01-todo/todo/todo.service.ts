@@ -1,8 +1,20 @@
 import { Todo } from "./entity/todo.entity";
 import { User } from "../../login/user.entity";
 
-import { Injectable, Logger, Scope, Inject, HttpStatus, HttpException } from "@nestjs/common";
-import { Connection, Repository, createQueryBuilder, getManager } from "typeorm";
+import {
+	Injectable,
+	Logger,
+	Scope,
+	Inject,
+	HttpStatus,
+	HttpException,
+} from "@nestjs/common";
+import {
+	Connection,
+	Repository,
+	createQueryBuilder,
+	getManager,
+} from "typeorm";
 import { OrdenarTodo } from "./entity/todo.index";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Proyecto } from "../proyecto/entity/proyecto.entity";
@@ -10,7 +22,7 @@ import { TodoInterface } from "./entity/todo.interface";
 import { TagService } from "../tag/tag.service";
 import { TagInterface } from "../tag/entity/tag.interface";
 import { Tag } from "../tag/entity/tag.entity";
-import { Tag_Todo } from './../tag_todo/entity/tag_todo.entity';
+import { Tag_Todo } from "./../tag_todo/entity/tag_todo.entity";
 import { plainToClass } from "class-transformer";
 
 @Injectable({ scope: Scope.REQUEST })
@@ -67,7 +79,11 @@ export class TodoService {
 		}
 	}
 
-	async updateSimpleTodo(usuario: User, data: TodoInterface, idProyecto: number) {
+	async updateSimpleTodo(
+		usuario: User,
+		data: TodoInterface,
+		idProyecto: number,
+	) {
 		this.logger.log("updateSimpleTodo");
 		const todo = await this.todoRepository
 			.createQueryBuilder()
@@ -92,32 +108,38 @@ export class TodoService {
 				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
 		}
-		return await this.getSimpleTodo(data.id)
+		return await this.getSimpleTodo(data.id);
 	}
 
 	async createTodo(usuario: User, todo: TodoInterface, idProyecto: number) {
 		this.logger.log("createTodo");
 
-		//Compruebo si los tags existen para crear el todo
+		// Compruebo si los tags existen para crear el todo
 		const tag: TagInterface[] = [];
 		if (todo.tag && todo.tag.length > 0) {
 			// tslint:disable-next-line: prefer-for-of
 			for (let index = 0; index < todo.tag.length; index++) {
-				const tagBuscado = await this.tagService.getSimpleTag(todo.tag[index].id);
+				const tagBuscado = await this.tagService.getSimpleTag(
+					todo.tag[index].id,
+				);
 				tag.push(tagBuscado[0]);
 			}
 		}
-		//Si hay tags en el objeto pero por alguna razon no pertenecen a este usuario/proyecto cancelo la operacion
-		if (todo.tag && todo.tag.length > 0 && (tag.length === 0 || tag[0] === undefined)) {
+		// Si hay tags en el objeto pero por alguna razon no pertenecen a este usuario/proyecto cancelo la operacion
+		if (
+			todo.tag &&
+			todo.tag.length > 0 &&
+			(tag.length === 0 || tag[0] === undefined)
+		) {
 			throw new HttpException(
 				{
 					message: "Input data validation failed",
-					errors: 'Tag: error',
+					errors: "Tag: error",
 				},
 				HttpStatus.BAD_REQUEST,
 			);
 		}
-		//Obtengo el orden del ultimo TODO y le sumo 1
+		// Obtengo el orden del ultimo TODO y le sumo 1
 		const getMaxOrden = await this.todoRepository
 			.createQueryBuilder()
 			.select("MAX(todo.orden)", "orden")
@@ -127,9 +149,9 @@ export class TodoService {
 			.andWhere("user.id = usuario_id", { usuario_id: usuario.id })
 			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
-		//Aumento +1 el orden
+		// Aumento +1 el orden
 		const aumentarMaxOrden = getMaxOrden[0].orden + 1;
-		//Inserto el nuevo registro
+		// Inserto el nuevo registro
 		await this.todoRepository
 			.createQueryBuilder()
 			.insert()
@@ -143,7 +165,7 @@ export class TodoService {
 				},
 			})
 			.execute();
-		//Obtengo el registro insertado
+		// Obtengo el registro insertado
 		const nuevoTodo = await this.todoRepository
 			.createQueryBuilder()
 			.select("MAX(todo.id)", "id")
@@ -153,21 +175,22 @@ export class TodoService {
 			.andWhere("user.id = usuario_id", { usuario_id: usuario.id })
 			.andWhere("user.id = proyecto.usuario_id")
 			.execute();
-		//Inserto los tags en la tabla correspondiente
+		// Inserto los tags en la tabla correspondiente
 		// tslint:disable-next-line: prefer-for-of
-		if(tag.length){
+		if (tag.length) {
+			// tslint:disable-next-line: prefer-for-of
 			for (let index = 0; index < todo.tag.length; index++) {
 				await createQueryBuilder(Tag_Todo)
-				.insert()
-				.values({
-					todo: {
-						id: nuevoTodo[0].id,
-					},
-					tag: {
-						id: todo.tag[index].id,
-					},
-				})
-				.execute();
+					.insert()
+					.values({
+						todo: {
+							id: nuevoTodo[0].id,
+						},
+						tag: {
+							id: todo.tag[index].id,
+						},
+					})
+					.execute();
 			}
 		}
 		return await this.getSimpleTodo(nuevoTodo[0].id);
@@ -191,32 +214,32 @@ export class TodoService {
 		}
 	}
 
-	private async getSimpleTodo(idTodo: number){
+	private async getSimpleTodo(idTodo: number) {
 		const todo: [TodoInterface] = await createQueryBuilder()
-		.select("todo.id", "id")
-		.addSelect("todo.titulo", "titulo")
-		.addSelect("todo.descripcion", "descripcion")
-		.addSelect("todo.orden", "orden")
-		.addSelect("todo.completado", "completado")
-		.addSelect("todo.proyecto_id", "proyecto_id")
-		.addFrom(Todo, "todo")
-		.where("todo.id = :idTodo", { idTodo })
-		.execute();
-		
-		const tag: TagInterface[] = await createQueryBuilder()
-		.select("tag.id", "id")
-		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyecto_id", "proyecto_id")
-		.from(Tag, "tag")
-		.addFrom(Tag_Todo, "tag_todo")
-		.where("tag_todo.tag_id = tag.id")
-		.andWhere("tag_todo.todo_id = :todoId", {todoId: idTodo})
-		.execute();
+			.select("todo.id", "id")
+			.addSelect("todo.titulo", "titulo")
+			.addSelect("todo.descripcion", "descripcion")
+			.addSelect("todo.orden", "orden")
+			.addSelect("todo.completado", "completado")
+			.addSelect("todo.proyecto_id", "proyecto_id")
+			.addFrom(Todo, "todo")
+			.where("todo.id = :idTodo", { idTodo })
+			.execute();
 
-		if(todo.length > 0 ){
+		const tag: TagInterface[] = await createQueryBuilder()
+			.select("tag.id", "id")
+			.addSelect("tag.titulo", "titulo")
+			.addSelect("tag.proyecto_id", "proyecto_id")
+			.from(Tag, "tag")
+			.addFrom(Tag_Todo, "tag_todo")
+			.where("tag_todo.tag_id = tag.id")
+			.andWhere("tag_todo.todo_id = :todoId", { todoId: idTodo })
+			.execute();
+
+		if (todo.length > 0) {
 			todo[0].tag = tag;
 			return todo;
-		}else{
+		} else {
 			return null;
 		}
 	}

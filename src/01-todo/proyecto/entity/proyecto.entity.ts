@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import {
+	Entity,
+	Column,
+	PrimaryGeneratedColumn,
+	ManyToOne,
+	JoinColumn,
+} from "typeorm";
 import { User } from "../../../login/user.entity";
 @Entity()
 export class Proyecto {
@@ -12,6 +18,6 @@ export class Proyecto {
 		onUpdate: "CASCADE",
 		onDelete: "CASCADE",
 	})
-	@JoinColumn({name: 'usuario_id'})
+	@JoinColumn({ name: "usuario_id" })
 	usuario: User;
 }

@@ -4,6 +4,5 @@ import { Injectable, Logger, Scope } from "@nestjs/common";
 export class TagTodoService {
 	public readonly logger = new Logger(TagTodoService.name);
 
-	constructor(
-	) {}
+	constructor() {}
 }

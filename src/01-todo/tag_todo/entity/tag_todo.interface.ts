@@ -5,5 +5,5 @@ import { TodoInterface } from "../../todo/entity/todo.interface";
 export interface Tag_Todo {
 	id: number;
 	todo: TodoInterface;
-    tag: TagInterface;
+	tag: TagInterface;
 }

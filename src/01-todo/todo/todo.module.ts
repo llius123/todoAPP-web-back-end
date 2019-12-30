@@ -28,7 +28,7 @@ import { TagTodoService } from "../tag_todo/tag_todo.service";
 			signOptions: { expiresIn: environment.expiresIn },
 		}),
 		GlobalModule,
-		TagModule
+		TagModule,
 	],
 	controllers: [TodoController, LoginController],
 	providers: [TodoService, LoginService, TagService],

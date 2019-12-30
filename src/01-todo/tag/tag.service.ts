@@ -20,16 +20,17 @@ export class TagService {
 	async getAllTag(user: User, idProyecto: number) {
 		this.logger.log("getAllTag");
 		return await this.tagRepository
-		.createQueryBuilder()
-		.select("tag.id", "id")
-		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyecto_id", "proyecto_id")
-		.from(User, "user")
-		.addFrom(Proyecto, "proyecto")
-		.where("proyecto.id = :proyecto_id", {proyecto_id: idProyecto})
-		.andWhere("user.id = :userId", {userId: user.id})
-		.andWhere("user.id = proyecto.usuario_id")
-		.andWhere("proyecto.id = tag.proyecto_id").execute();
+			.createQueryBuilder()
+			.select("tag.id", "id")
+			.addSelect("tag.titulo", "titulo")
+			.addSelect("tag.proyecto_id", "proyecto_id")
+			.from(User, "user")
+			.addFrom(Proyecto, "proyecto")
+			.where("proyecto.id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = :userId", { userId: user.id })
+			.andWhere("user.id = proyecto.usuario_id")
+			.andWhere("proyecto.id = tag.proyecto_id")
+			.execute();
 	}
 
 	async updateSimpleTag(usuario: User, data: Tag, idProyecto: number) {
@@ -57,67 +58,69 @@ export class TagService {
 				.select("id")
 				.addSelect("titulo")
 				.addSelect("proyecto_id")
-				.where("id = :id", {id: todo[0].Tag_id})
+				.where("id = :id", { id: todo[0].Tag_id })
 				.execute();
-				}
-	}
-
-	async eliminarTag(user: User, idTag: number){
-		this.logger.log("eliminarTag");
-		const tag: any = classToPlain(await this.tagRepository
-		.createQueryBuilder()
-		.select("tag.id", "id")
-		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyecto_id", "proyecto_id")
-		.from(User, "user")
-		.addFrom(Proyecto, "proyecto")
-		.where("tag.id = :idTag", {idTag})
-		.andWhere("user.id = :userId", {userId: user.id})
-		.andWhere("tag.proyecto_id = proyecto.id")
-		.andWhere("proyecto.usuario_id = user.id")
-		.execute())
-
-		if (tag[0] !== null && tag.length > 0) {
-			await this.tagRepository
-			.createQueryBuilder()
-			.delete()
-			.where("id = :id", {id: idTag})
-			.execute()
 		}
 	}
 
-	async createTag(tag: Tag, user: User, idProyecto: number){
-		this.logger.log("crearTag");
-		await this.tagRepository
-		.createQueryBuilder()
-		.insert()
-		.values({
-			titulo: tag.titulo,
-			proyecto: {
-				id: idProyecto,
-			},
-		})
-		.execute();
+	async eliminarTag(user: User, idTag: number) {
+		this.logger.log("eliminarTag");
+		const tag: any = classToPlain(
+			await this.tagRepository
+				.createQueryBuilder()
+				.select("tag.id", "id")
+				.addSelect("tag.titulo", "titulo")
+				.addSelect("tag.proyecto_id", "proyecto_id")
+				.from(User, "user")
+				.addFrom(Proyecto, "proyecto")
+				.where("tag.id = :idTag", { idTag })
+				.andWhere("user.id = :userId", { userId: user.id })
+				.andWhere("tag.proyecto_id = proyecto.id")
+				.andWhere("proyecto.usuario_id = user.id")
+				.execute(),
+		);
 
-		return await this.tagRepository
-		.createQueryBuilder()
-		.select("MAX(tag.id)", "id")
-		.addSelect("tag.titulo", "titulo")
-		.addSelect("tag.proyecto_id", "proyecto_id")
-		.addFrom(Proyecto, "proyecto")
-		.addFrom(User, "user")
-		.where("tag.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
-		.andWhere("user.id = usuario_id", { usuario_id: user.id })
-		.andWhere("user.id = proyecto.usuario_id")
-		.limit(1)
-		.execute();
+		if (tag[0] !== null && tag.length > 0) {
+			await this.tagRepository
+				.createQueryBuilder()
+				.delete()
+				.where("id = :id", { id: idTag })
+				.execute();
+		}
 	}
 
-	async getSimpleTag(id: number): Promise<TagInterface[]>{
+	async createTag(tag: Tag, user: User, idProyecto: number) {
+		this.logger.log("crearTag");
+		await this.tagRepository
+			.createQueryBuilder()
+			.insert()
+			.values({
+				titulo: tag.titulo,
+				proyecto: {
+					id: idProyecto,
+				},
+			})
+			.execute();
+
+		return await this.tagRepository
+			.createQueryBuilder()
+			.select("MAX(tag.id)", "id")
+			.addSelect("tag.titulo", "titulo")
+			.addSelect("tag.proyecto_id", "proyecto_id")
+			.addFrom(Proyecto, "proyecto")
+			.addFrom(User, "user")
+			.where("tag.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("user.id = usuario_id", { usuario_id: user.id })
+			.andWhere("user.id = proyecto.usuario_id")
+			.limit(1)
+			.execute();
+	}
+
+	async getSimpleTag(id: number): Promise<TagInterface[]> {
 		this.logger.log("crearTag");
 		return this.tagRepository
-		.createQueryBuilder()
-		.where("id = :id", {id: id})
-		.execute();
+			.createQueryBuilder()
+			.where("id = :id", { id })
+			.execute();
 	}
 }

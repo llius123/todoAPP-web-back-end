@@ -5,7 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./login/user.entity";
 import { LoginModule } from "./login/login.module";
 import { GlobalModule } from "./global/global.module";
-//01-todo
+// 01-todo
 import { TodoModule } from "./01-todo/todo/todo.module";
 import { Todo } from "./01-todo/todo/entity/todo.entity";
 import { ProyectoModule } from "./01-todo/proyecto/proyecto.module";

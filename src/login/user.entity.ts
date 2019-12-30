@@ -1,7 +1,13 @@
 import { Proyecto } from "../01-todo/proyecto/entity/proyecto.entity";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from "typeorm";
+import {
+	Entity,
+	Column,
+	PrimaryGeneratedColumn,
+	OneToMany,
+	JoinColumn,
+} from "typeorm";
 
-@Entity({name: "usuario"})
+@Entity({ name: "usuario" })
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
