@@ -59,12 +59,11 @@ export class TodoController {
 	@UsePipes(new ValidationPipe(TodoUpdate))
 	@Put("updateSimpleTodo/:idProyecto")
 	async updateSimpleTodo(@Body() todo: TodoInterface, @Request() request) {
-		await this.todoService.updateSimpleTodo(
+		return await this.todoService.updateSimpleTodo(
 			request.user,
 			todo,
 			request.params.idProyecto,
 		);
-		return { code: 200, msg: "ok" };
 	}
 
 	@ApiOperation({ title: "Create TODO" })
@@ -72,12 +71,11 @@ export class TodoController {
 	@UsePipes(new ValidationPipe(TodoCreate))
 	@Post("createTodo/:idProyecto")
 	async createTodo(@Body() todo: TodoInterface, @Request() request) {
-		await this.todoService.createTodo(
+		return await this.todoService.createTodo(
 			request.user,
 			todo,
 			request.params.idProyecto,
 		);
-		return { code: 200, msg: "ok" };
 	}
 
 	@ApiOperation({ title: "Eliminar TODO" })

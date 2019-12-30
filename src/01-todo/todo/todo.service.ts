@@ -2,7 +2,7 @@ import { Todo } from "./entity/todo.entity";
 import { User } from "../../login/user.entity";
 
 import { Injectable, Logger, Scope, Inject, HttpStatus, HttpException } from "@nestjs/common";
-import { Connection, Repository, createQueryBuilder } from "typeorm";
+import { Connection, Repository, createQueryBuilder, getManager } from "typeorm";
 import { OrdenarTodo } from "./entity/todo.index";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Proyecto } from "../proyecto/entity/proyecto.entity";
@@ -11,6 +11,7 @@ import { TagService } from "../tag/tag.service";
 import { TagInterface } from "../tag/entity/tag.interface";
 import { Tag } from "../tag/entity/tag.entity";
 import { Tag_Todo } from './../tag_todo/entity/tag_todo.entity';
+import { plainToClass } from "class-transformer";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TodoService {
@@ -91,6 +92,7 @@ export class TodoService {
 				.where("id = :todo_id", { todo_id: data.id })
 				.execute();
 		}
+		return await this.getSimpleTodo(data.id)
 	}
 
 	async createTodo(usuario: User, todo: TodoInterface, idProyecto: number) {
@@ -168,21 +170,13 @@ export class TodoService {
 				.execute();
 			}
 		}
+		return await this.getSimpleTodo(nuevoTodo[0].id);
 	}
 
 	async eliminarTodo(usuario: User, id: number) {
 		this.logger.log("eliminarTodo");
 
-		// const todo: [any] = await createQueryBuilder()
-		// 	.from(User, "u")
-		// 	.addFrom(Proyecto, "p")
-		// 	.addFrom(Todo, "t")
-		// 	.where("t.id = :idTodo", { idTodo: id })
-		// 	.andWhere("u.id = p.usuario_id")
-		// 	.andWhere("p.id = t.proyecto_id")
-		// 	.andWhere("u.id = :idUsuario", { idUsuario: usuario.id })
-		// 	.execute();
-		const todo: [any] = await this.getSimpleTodo(id);
+		const todo: TodoInterface[] = await this.getSimpleTodo(id);
 
 		if (todo[0] !== null && todo.length > 0) {
 			await this.todoRepository
@@ -198,19 +192,18 @@ export class TodoService {
 	}
 
 	private async getSimpleTodo(idTodo: number){
-		const todo: [any] = await this.todoRepository
-		.createQueryBuilder()
+		const todo: [TodoInterface] = await createQueryBuilder()
 		.select("todo.id", "id")
 		.addSelect("todo.titulo", "titulo")
 		.addSelect("todo.descripcion", "descripcion")
 		.addSelect("todo.orden", "orden")
 		.addSelect("todo.completado", "completado")
 		.addSelect("todo.proyecto_id", "proyecto_id")
-		.addFrom(Todo, "t")
-		.where("t.id = :idTodo", { idTodo: idTodo })
+		.addFrom(Todo, "todo")
+		.where("todo.id = :idTodo", { idTodo })
 		.execute();
 		
-		const tag: [any] = await createQueryBuilder()
+		const tag: TagInterface[] = await createQueryBuilder()
 		.select("tag.id", "id")
 		.addSelect("tag.titulo", "titulo")
 		.addSelect("tag.proyecto_id", "proyecto_id")
@@ -219,7 +212,12 @@ export class TodoService {
 		.where("tag_todo.tag_id = tag.id")
 		.andWhere("tag_todo.todo_id = :todoId", {todoId: idTodo})
 		.execute();
-		
-		return {...todo[0], ...tag};
+
+		if(todo.length > 0 ){
+			todo[0].tag = tag;
+			return todo;
+		}else{
+			return null;
+		}
 	}
 }
