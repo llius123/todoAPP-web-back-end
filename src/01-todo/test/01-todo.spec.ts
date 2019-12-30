@@ -120,14 +120,6 @@ describe('02-todo-todo', () => {
 		expect(tagCreado.body[0].titulo).toBe("EDITADO");
 		expect(tagCreado.body[0].proyecto_id).toBe(NUEVO_PROYECTO_MOCK.id);
 	});
-	// it('Eliminar un tag', async () => {
-	// 	const tagCreado = await request(BASE_URL)
-	// 		.delete('/tag/eliminarTag/' + TAG_MOCK.id)
-	// 		.set("Content-Type","application/json")
-	// 		.set('Authorization', JWT_MOCK)
-	// 		.send(USER_MOCK)
-	// 		.expect(200);
-	// });
 });
 
 
