@@ -3,7 +3,7 @@ import { ApiUseTags, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiBearerAuth()
 @ApiUseTags("TAG_TODO")
-@Controller({ path: "tagtodo", scope: Scope.REQUEST })
+//@Controller({ path: "tagtodo", scope: Scope.REQUEST })
 export class TagTodoController {
 	constructor() {}
 }

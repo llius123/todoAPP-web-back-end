@@ -5,4 +5,8 @@ export class TagTodoService {
 	public readonly logger = new Logger(TagTodoService.name);
 
 	constructor() {}
+
+	public async enlazarTagConTodo(idTag: number, idTodo: number){
+		
+	}
 }

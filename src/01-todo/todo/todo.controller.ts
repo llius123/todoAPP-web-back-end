@@ -67,7 +67,7 @@ export class TodoController {
 	}
 
 	@ApiOperation({ title: "Create TODO" })
-	// @ApiResponse({ status: 201, type: TodoSwagger })
+	@ApiResponse({ status: 201, type: TodoSwagger })
 	@UsePipes(new ValidationPipe(TodoCreate))
 	@Post("createTodo/:idProyecto")
 	async createTodo(@Body() todo: TodoInterface, @Request() request) {
