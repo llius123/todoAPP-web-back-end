@@ -13,6 +13,7 @@ import { Proyecto } from "./01-todo/proyecto/entity/proyecto.index";
 import { TagModule } from "./01-todo/tag/tag.module";
 import { Tag } from "./01-todo/tag/entity/tag.entity";
 import { Tag_Todo } from "./01-todo/tag_todo/entity/tag_todo.entity";
+import { TagTodoModule } from "./01-todo/tag_todo/tag_todo.module";
 
 @Module({
 	imports: [
@@ -45,6 +46,7 @@ import { Tag_Todo } from "./01-todo/tag_todo/entity/tag_todo.entity";
 		TodoModule,
 		ProyectoModule,
 		TagModule,
+		TagTodoModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

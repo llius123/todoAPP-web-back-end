@@ -39,6 +39,13 @@ export class TodoController {
 		return this.todoService.getAllTodo(request.user, proyecto);
 	}
 
+	@ApiOperation({ title: "Obtener un TODO" })
+	@ApiResponse({ status: 201, type: TodoSwagger })
+	@Get("getSimpleTodo/:idProyecto/:idTodo")
+	async getSimpleTodo(@Param("idProyecto") idProyecto: number,@Param("idTodo") idTodo: number , @Request() request) {
+		return await this.todoService.getSimpleTodo(idTodo);
+	}
+
 	@ApiOperation({ title: "Update order TODO" })
 	@UsePipes(new ValidationArrayPipe(OrdenarTodo))
 	@Put("updateOrderTodo/:id")

@@ -39,22 +39,26 @@ export class TodoService {
 
 	async getAllTodo(usuario: User, proyecto: number) {
 		this.logger.log("getAllTodo");
-		return await this.todoRepository
+		const todosLosIdAsiociadosATi: [{id:number}] = await this.todoRepository
 			.createQueryBuilder("todo")
 			.select("todo.id", "id")
-			.addSelect("todo.titulo", "titulo")
-			.addSelect("todo.descripcion", "descripcion")
-			.addSelect("todo.orden", "orden")
-			.addSelect("todo.completado", "completado")
-			.addSelect("todo.proyecto_id", "proyecto_id")
 			.addFrom(Proyecto, "proyecto")
 			.addFrom(User, "user")
+			.addFrom(Tag, "tag")
 			.where("proyecto.usuario_id = :usuario_id", { usuario_id: usuario.id })
 			.andWhere("proyecto.id = :proyecto_id", { proyecto_id: proyecto })
 			.andWhere("proyecto.id = todo.proyecto_id")
 			.groupBy("todo.id")
 			.orderBy("todo.orden")
 			.execute();
+		let todos = [];
+		for (const key in todosLosIdAsiociadosATi) {
+			if(key){
+				const todo = await this.getSimpleTodo(todosLosIdAsiociadosATi[key].id);
+				todos.push(todo[0]);
+			}
+		}
+		return todos;
 	}
 
 	async orderTodo(usuario: User, data: OrdenarTodo, idProyecto: number) {
@@ -214,7 +218,7 @@ export class TodoService {
 		}
 	}
 
-	private async getSimpleTodo(idTodo: number) {
+	public async getSimpleTodo(idTodo: number) {
 		const todo: [TodoInterface] = await createQueryBuilder()
 			.select("todo.id", "id")
 			.addSelect("todo.titulo", "titulo")
