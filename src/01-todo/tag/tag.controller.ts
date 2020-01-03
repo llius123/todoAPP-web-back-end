@@ -70,4 +70,15 @@ export class TagController {
 			request.params.idProyecto,
 		);
 	}
+
+	@ApiOperation({ title: "Obtener todos los tags asociados a un todo TAG" })
+	@ApiResponse({ status: 201, type: [TagSwagger] })
+	@Get("getAllTagByTodo/:idProyecto/:idTodo")
+	async getAllTagByTodo(@Request() request, @Param("idProyecto") idProyecto: number, @Param("idTodo") idTodo: number) {
+		return this.tagService.getAllTagByTodo (
+			idProyecto,
+			idTodo,
+			request.user,
+		);
+	}
 }

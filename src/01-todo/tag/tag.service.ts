@@ -6,6 +6,7 @@ import { User } from "../../login/user.entity";
 import { Proyecto } from "../proyecto/entity/proyecto.index";
 import { classToPlain } from "class-transformer";
 import { TagInterface } from "./entity/tag.interface";
+import { Tag_Todo } from "../tag_todo/entity/tag_todo.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class TagService {
@@ -121,6 +122,26 @@ export class TagService {
 		return this.tagRepository
 			.createQueryBuilder()
 			.where("id = :id", { id })
+			.execute();
+	}
+
+	async getAllTagByTodo(idProyecto: number,idTodo: number,user: User){
+		this.logger.log("getAllTagByTodo");
+		return await this.tagRepository
+			.createQueryBuilder()
+			.select("tag.id", "id")
+			.addSelect("tag.titulo", "titulo")
+			.addSelect("tag.proyecto_id", "proyecto_id")
+			.from(User, "user")
+			.addFrom(Proyecto, "proyecto")
+			.addFrom(Tag_Todo, "tag_todo")
+			.where("proyecto.id = :proyecto_id", { proyecto_id: idProyecto })
+			.andWhere("proyecto.id = tag.proyecto_id")
+			.andWhere("user.id = :userId", { userId: user.id })
+			.andWhere("user.id = proyecto.usuario_id")
+			.andWhere("tag_todo.todo_id = :todoId", {todoId: idTodo})
+			.andWhere("tag_todo.tag_id = tag.id")
+			.groupBy("tag.id")
 			.execute();
 	}
 }
