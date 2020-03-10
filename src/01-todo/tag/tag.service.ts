@@ -118,9 +118,10 @@ export class TagService {
 	}
 
 	async getSimpleTag(id: number): Promise<TagInterface[]> {
-		this.logger.log("crearTag");
+		this.logger.log("getSimpleTag");
 		return this.tagRepository
 			.createQueryBuilder()
+			.select("id, titulo, proyecto_id")
 			.where("id = :id", { id })
 			.execute();
 	}

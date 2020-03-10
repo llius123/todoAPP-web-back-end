@@ -2,7 +2,7 @@ import { Injectable, Logger, Scope } from "@nestjs/common";
 import { TagService } from "../tag/tag.service";
 import { User } from "src/login/user.entity";
 import { Tag } from "../tag/entity/tag.entity";
-import { createQueryBuilder, Repository } from "typeorm";
+import { createQueryBuilder, Repository, createConnection } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Tag_Todo } from "./entity/tag_todo.entity";
 
@@ -38,6 +38,7 @@ export class TagTodoService {
 				tag: {id: idTag},
 			})
 			.execute();
+		return await this.tagService.getSimpleTag(idTag);
 	}
 
 	public async eliminarEnlazeTagConTodo(user: User, idProyecto: number, idTodo: number, idTag: number){

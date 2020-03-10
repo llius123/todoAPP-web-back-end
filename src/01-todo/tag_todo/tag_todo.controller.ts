@@ -27,7 +27,7 @@ export class TagTodoController {
 	@ApiResponse({ status: 201, description: "ok" })
 	@Post("enlazarTagConTodo/:idProyecto/:idTodo/:idTag")
 	async enlazarTagConTodo(@Request() request, @Param("idProyecto") idProyecto: number, @Param("idTodo") idTodo: number, @Param("idTag") idTag: number) {
-		await this.tag_todoService.enlazarTagConTodo(
+		return await this.tag_todoService.enlazarTagConTodo(
 			request.user,
 			idProyecto,
 			idTodo,
