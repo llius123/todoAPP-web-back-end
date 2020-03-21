@@ -103,18 +103,17 @@ export class TagService {
 			})
 			.execute();
 
+		//Se usa el query aqui porque no se como usar IN con TYPEORM
 		return await this.tagRepository
-			.createQueryBuilder()
-			.select("MAX(tag.id)", "id")
-			.addSelect("tag.titulo", "titulo")
-			.addSelect("tag.proyecto_id", "proyecto_id")
-			.addFrom(Proyecto, "proyecto")
-			.addFrom(User, "user")
-			.where("tag.proyecto_id = :proyecto_id", { proyecto_id: idProyecto })
-			.andWhere("user.id = usuario_id", { usuario_id: user.id })
-			.andWhere("user.id = proyecto.usuario_id")
-			.limit(1)
-			.execute();
+		.query(`
+		SELECT tag.id, tag.titulo, tag.proyecto_id
+		FROM tag Tag, proyecto proyecto
+		WHERE tag.id IN (
+		SELECT MAX(tag.id)
+		FROM tag Tag, proyecto proyecto
+		WHERE proyecto.usuario_id = 1  AND tag.proyecto_id = 1 AND tag.proyecto_id = proyecto.id)
+		GROUP BY tag.id
+		`)
 	}
 
 	async getSimpleTag(id: number): Promise<TagInterface[]> {
